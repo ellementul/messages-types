@@ -1,37 +1,83 @@
-console.info("Тестирование типов: " +
-	(function(){
-		
-		var types = [T.bool, T.pos, T.int, T.num, T.str, false, null, 567, 'str'];
-		var AnyType = T.any(types);
-		var ex = AnyType.rand();
-		if(!AnyType.test(ex)){
-			console.error('Первый тест', ex);
+"use strict";
+
+var T = require("./types.js");
+
+console.info("Тестирование чисел: ");
+
+var pos = T.pos(T.pos.rand());
+console.info("	Индексовых: " + revisType(pos, 1000) );
+
+var int = T.int(T.int.rand(), T.int.rand(), T.int(null, 1).rand());
+console.info("	Целых: " + revisType(int, 10000) );
+
+var number = T.num(T.num.rand(), T.num.rand(), T.pos(9).rand());
+console.info("	Дробных: " + revisType(number, 1000));
+console.info();
+
+var any_types = T.any(pos, "none", int, number, null, 78);
+var types_arr = [pos, "none", int, number, null, 78, "aggdgegf", "bwgffefkv", "ивамфаамиа"];
+var any_type = T.any(types_arr);
+console.log("Тестирование смешаного типа: " + (revisType(any_types, 10) && revisType(any_type, 10)));
+console.info();
+
+console.log("Тестирование массива: ");
+console.log("	С одним типом: ");
+var arr = T.arr(pos, 10, true);
+console.log("		Фиксированный: " + revisType(arr, 10));
+var arr = T.arr(pos, 10, false);
+console.log("		Нефиксированный: " + revisType(arr, 10));
+console.log("	С последовательностью типов: ");
+var arr = T.arr(types_arr, 10, true);
+console.log("		Фиксированный: " + revisType(arr, 10));
+var arr = T.arr(types_arr, 10, false);
+console.log("		Нефиксированный: " + revisType(arr, 10));
+console.info();
+
+
+var tmp_obj = {};
+var valOrType = function(type, is_val){
+	if(is_val){
+		return type.rand();
+	}else{
+		return type;
+	}
+};
+var ter = 17;
+while(ter--){
+	
+	tmp_obj["" + T.pos(111).rand()] = valOrType(types_arr.rand_i());
+}
+var obj_type = T.obj(tmp_obj);
+console.log("Тестирование объектов: " + revisType(obj_type, 10));
+console.log("	Одноуровневнего: " + revisType(obj_type, 10));
+
+tmp_obj.recur1 = obj_type;
+obj_type = T.obj(tmp_obj);
+console.log("	Двухуровневнего: " + revisType(obj_type, 10));
+
+tmp_obj.recur2 = obj_type;
+obj_type = T.obj(tmp_obj);
+console.log("	Трехуровневого: " + revisType(obj_type, 10));
+
+obj_type = T.obj({a: tmp_obj, b: tmp_obj.recur2, c: tmp_obj.recur1});
+console.log("	Многоуровневого: " + revisType(obj_type, 10));
+console.info();
+
+
+var tmp_doc = obj_type.doc();
+console.log("Восстановление типа по документации: " + revisType(T.outDoc(tmp_doc), 10));
+
+function revisType(type, count){
+	
+	while(count--){
+		var value = type.rand();
+		if(!type.test(value)){
+			console.log("Проверяющий тип: ");
+			console.log(type.doc());
+			console.log("Не проешедшее проверку значение: " + value);
 			return false;
 		}
-		
-		
-		var temple = T.obj.rand();
-		var i = 7;
-		while(i){
-			i--;
-			var key = T.str.rand();
-			if(key) temple[key] = types.rand();
-		}
-		
-		var Ob = T.obj(temple);
-		ex = Ob.rand();
-		if(!Ob.test(ex)){
-			console.error('Второй тест', ex);
-			return false;
-		}
-		
-		var tmpDoc = JSON.parse(JSON.stringify(Ob.doc()));
-		var newOb = T.outDoc(tmpDoc);
-		ex = newOb.rand();
-		if(!Ob.test(ex)){
-			console.error('Третий тест', ex);
-			return false;
-		}
-		
-		return true;
-	})());
+	}
+	
+	return true;
+}

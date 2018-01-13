@@ -1,4 +1,5 @@
 'use strict';
+require('./mof.js');
 (function(){
 		if(typeof(module) == "object"){
 			module.exports = new Types();
@@ -9,7 +10,9 @@
 		}
         
             function Types(){
-				if(typeof(Object.types) == "object") return Object.types;
+				if(typeof(Object.types) == "object"){
+					return Object.types;
+				}else Object.types = this;
 				
 				var T = this;
                 var Doc = {
@@ -18,10 +21,15 @@
 							name: "Boolean",
 							arg: []
 						},
+                        'const': {
+							name: "Constant",
+							arg: ["value"],
+							params: { value: {type: "Something", default_value: null}}
+						},
                         'pos': {
 							name: "Position",
 							arg: ['max'],
-							params: {max: {type: 'pos', default_value: Number.MAX_SAFE_INTEGER}}
+							params: {max: {type: 'pos', default_value: +2147483647}}
 								
 						},
                         
@@ -29,8 +37,8 @@
 							name: "Integer",
 							arg: ["max", "min", "step"],
 							params: {
-									max: {type: 'int', default_value: Number.MAX_SAFE_INTEGER},
-                                    min: {type: 'int', default_value: Number.MIN_SAFE_INTEGER},
+									max: {type: 'int', default_value: +2147483647},
+                                    min: {type: 'int', default_value: -2147483648},
                                     step: {type: 'pos', default_value: 1}
                                 }
                         },
@@ -39,17 +47,9 @@
 							name: "Number",
 							arg: ["max", "min", "precis"],
 							params: {
-									max: {type: 'num', default_value: Number.MAX_SAFE_INTEGER},
-                                    min: {type: 'num', default_value: Number.MIN_SAFE_INTEGER},
-                                    precis: {type: 'pos', default_value: 7}
-								}
-                        },
-                        'str': {
-							name: "String",
-							arg: ["range", "length"],
-							params: {
-									range: {type: 'RegExp || str', default_value: /[0-9a-zA-Z_]/}, 
-									length: {type: 'pos', default_value: 17}
+									max: {type: 'num', default_value: +2147483647},
+                                    min: {type: 'num', default_value: -2147483648},
+                                    precis: {type: 'pos', default_value: 9}
 								}
                         },
                         'arr': {
@@ -61,11 +61,6 @@
 									fixed: {type: 'bool', default_value: true}
 								}
                         },
-                        'const': {
-							name: "Constant",
-							arg: ["value"],
-							params: { value: {type: "Something", default_value: null}}
-						},
                         'any': {
 							name: "MixType",
 							arg: ["types"],
@@ -77,15 +72,7 @@
 							name: "Object",
 							arg: ["types"],
 							params: {types: {type: "Object", default_value: {}}}
-						}, 
-                        'func': {
-							name: "Function",
-							params : {
-								context: {type: 'object||null', default_value: null},
-								input: {type: "Type || [Type, Type...]", get default_value(){return T.pos}},
-								output: {type: "Type", get default_value(){return T.str}}
-							}
-                        }
+						}
                     },
                     getConst: function(name_type, name_limit){
                         return this.types[name_type].params[name_limit].default_value;
@@ -133,75 +120,6 @@
                 
                 
                 var T = this;
-                //Craft object.protype
-                function constProp(name_prop, value, vis){
-                    if(vis === undefined) vis = true;
-                    if(typeof value === "object") Object.freeze(value);
-                    Object.defineProperty(this, name_prop, {
-                            value: value,
-                            enumerable: vis
-                        });
-                }
-                function getSet(name, getter, setter){
-                    if(typeof setter == "function"){
-                        Object.defineProperty(this, name, {
-                            get: getter,
-                            set: setter,
-                            enumerable: true,
-                            configurable: true
-                        });
-                    }else{
-                        Object.defineProperty(this, name, {
-                            get: getter,
-                            enumerable: true,
-                            configurable: true
-                        });
-                    }
-                }
-                
-                constProp.call(Object.prototype, '_addConst', constProp, false);
-                Object.prototype._addConst('_addGetSet', getSet, false);
-
-                Object.defineProperty(Object, 'types', {
-					value: T,
-					enumerable: true
-				});
-                
-                
-                if(typeof(Object.prototype.toSource) !== "function"){
-                    Object.defineProperty(Object.prototype, 'toSource',{
-                        value: function(){
-                                var str = '{';
-                                for(var key in this){
-                                    str += ' ' + key + ': ' + this[key] + ',';
-                                }
-                                if(str.length > 2) str = str.slice(0, -1) + ' ';
-                                return str + '}';
-                            },
-                        enumerable: false
-                    });
-                }
-                
-                
-                if(typeof(Object.values) !== "function"){
-                    var val_Obj = function(obj){
-                        var vals = [];
-                        
-                        for (var key in obj) {
-                            vals.push(obj[key]);
-                        }
-                        
-                        return vals;
-                    };
-                    
-                     Object._addConst('values', val_Obj.bind(Object));
-                }
-                
-                //Craft RegExp.prototype
-                
-                RegExp.prototype._addConst('toJSON', function(){
-					return this.source;
-				});
                 
                 
                 function CreateCreator(New, test, rand, doc){
@@ -211,16 +129,16 @@
                             var tmp_obj = New.apply({}, arguments);
                             var new_creator = new CreateCreator(New);
                             for(var key in tmp_obj){
-                                new_creator._addConst(key, tmp_obj[key]);
+                                new_creator.addConstProp(key, tmp_obj[key]);
                             }
                             return new_creator;
                         };
                     }else creator = function(){return creator};
                     
-                    creator._addConst('is_creator', true);
-                    if(typeof test === "function") creator._addConst('test', test);
-                    if(typeof rand === "function") creator._addConst('rand', rand);
-                    if(typeof doc === "function") creator._addConst('doc', doc);
+                    creator.addConstProp('is_creator', true);
+                    if(typeof test === "function") creator.addConstProp('test', test);
+                    if(typeof rand === "function") creator.addConstProp('rand', rand);
+                    if(typeof doc === "function") creator.addConstProp('doc', doc);
                     
                     return creator;
                 }
@@ -345,7 +263,7 @@
                     
                     var randInt = function(max, min, precis){
                         return function(){
-                            return Math.floor( Math.round((max - min)*Math.random() +  min) / precis)*precis;
+                            return Math.floor( ((max - min)/precis)*Math.random() ) * precis +  min;
                         }
                     };
                     
@@ -354,11 +272,10 @@
                             if(typeof n !== 'number' || !isFinite(n)){
                                 return false;
                             }
-                              
+                             
                             if((n > max)
                                 ||(n < min)
-                                ||((n % precis) !== 0) ){
-                                    
+                                ||(((n - min) % precis) !== 0) ){
                                 return false;
                             } 
                             return true;
@@ -436,408 +353,13 @@
                     );
                 
                 
-                //Craft Range
-                    function SetOfNumbers(isFunc, x, y){
-                        var beg = 0;
-                        var end = 0;
-                        var step = 1;
-                        
-                        if(typeof(isFunc) !== "function"){
-                            isFunc = function(val){return(typeof(val) === "number")}
-                        }
-                        
-                        if(isFunc(x)) beg = x;
-                        if(isFunc(y)) end = y;
-                        if(beg > end){
-                            var min = end;
-                            end = beg;
-                            beg = min;
-                        }
-                        
-						{//Getters and Setters
-							this._addGetSet('beg',
-									function(){return beg;}
-							);
-							this._addGetSet('end',
-									function(){return end;}
-							);
-							this._addGetSet('length', function(){return end - beg;});
-						}     
-                   
-                        function inRange(val){
-                            return (beg <= val && val <= end);
-                        }
-                        this._addConst('in', inRange);
-                    
-                        
-                        function isCrossRange(R){
-                            if(!(R instanceof SetOfNumbers)) throw new TypeError('Wait class object "Range"!'); 
-                            if(this.in(R.beg) && this.in(R.end)){
-                                return true;
-                            }
-                            if(R.in(this.beg) && R.in(this.end)){
-                                return false;
-                            }
-                            if(this.in(R.beg) || this.in(R.end)){
-                                if(this.in(R.beg)){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                            return null;
-                        }
-                        this._addConst('isCross', isCrossRange);
-                        
-                        function Concat(R){
-                            var is_cross = this.isCross(R);
-                            if(is_cross === null) return false;
-                            
-                            if(is_cross === -1){
-                                return new SetOfNumbers(isFunc, this.beg, R.end);
-                            }
-                            if(is_cross === 1){
-                                return new SetOfNumbers(isFunc, R.beg, this.end);
-                            }
-                            
-                            if(is_cross){
-                                return this;
-                            }else return R;
-                        }
-                        this._addConst('concat', Concat);
-                        
-                        function And(R){
-                            var is_cross = this.isCross(R);
-                            if(is_cross === null) return false;
-                            
-                            if(is_cross === -1){
-                                return new SetOfNumbers(isFunc, R.beg, this.end);
-                            }
-                            if(is_cross === 1){
-                                return new SetOfNumbers(isFunc, this.beg, R.end);
-                            }
-                            
-                            if(is_cross){
-                                return R;
-                            }else return this;
-                        }
-                        this._addConst('and', And);
-                        
-                        function randStep(){
-                            var length = Math.floor(this.length / step);
-                            
-                            var rand = T.pos(length).rand;
-                            
-                            return rand()*step + beg;
-                        }
-                        this._addConst('rand_step', randStep);
-                        
-                        return this;
-                    }
-                    
-                    function testRange(isFunc){
-                        return function(R){ return (R instanceof SetOfNumbers)&&isFunc(R.beg)&&isFunc(R.end) };
-                    }
-                    
-                    function randRange(creator){
-                        return function(){return new SetOfNumbers(creator.test, creator.rand(), creator.rand());}
-                    }
-                    
-                    function NewRange(max, min, precis){
-                        var num = this.num(max, min, precis);
-                        return {
-                            'new': function(x,y){ return new SetOfNumbers(num.test, x, y)},
-                            test: testRange(num.test),
-                            rand: randRange(num),
-                            doc: DocRange(num.doc)
-                        };
-                    }
-                    
-                    function DocRange(num_doc){
-                        return function(){return {Name: "Range", Params: {Limits: num_doc().Params}};};
-                    }
-                    
-                    var Many = SetOfNumbers.bind(null, null);
-                    
-                    if(typeof(global) == "object"){
-						global.Many = SetOfNumbers.bind(null, null);
-					}
-
-					if(typeof(window) == "object"){
-						window.Many = SetOfNumbers.bind(null, null);
-					}
-                    
-                    this.range = new CreateCreator(NewRange.bind(this), 
-                        testRange(function(val){return(typeof(val) === "number")}), 
-                        randRange(this.num),
-                        DocRange(this.num.doc)
-                    );
                 
                 
-                //Craf String
-                    
-                    function replaceSpecChar(c){
-                        switch(c){
-                            case 'w': return 'a-zA-Z0-9_';
-                            case 'd': return '0-9';
-                            case 's': return '\\t\\n\\v\\f\\r ';
-                            
-                            default: return c;
-                        }
-                    }
-                    
-                    function parseRange(parse_str){
-                        if(/\\./.test(parse_str)){
-                                parse_str = parse_str.replace(/\\(.)/g, function(str, char){ return replaceSpecChar(char);});
-                        }
-                            
-                        var result = [];
-                        
-                        var beg_char = parse_str[0];
-                        for(var i = 1; i <= parse_str.length; i++){
-                            if(parse_str[i-1] !== '\\'
-								&&parse_str[i] === '-'
-								&&parse_str[i+1]){
-                                i++;
-                                var end_char = parse_str[i];
-                                var range = new Many(beg_char.charCodeAt(0), end_char.charCodeAt(0));
-                                
-                                var is_concat = false;
-                                for(var j = 0; j < result.length; j++){
-                                    var arr_concat = range.concat(result[j]);
-                                    if(arr_concat){
-                                        result[j] = arr_concat;
-                                        is_concat = true;
-                                        break;
-                                    }
-                                }
-                                
-                                if(!is_concat) result.push(range);
-                                i++;
-                            }else{
-                                result.push( new Many(beg_char.charCodeAt(0), beg_char.charCodeAt(0)) );
-                            }
-                            beg_char = parse_str[i];
-                        }
-                        return result;
-                    }
-                    
-                    function randChars(chars_arr, size){
-                        size = T.int(size, 1).rand();
-                        var num = T.pos(chars_arr.length - 1).rand;
-                        var str = '';
-                        while(size){
-                            str +=String.fromCharCode(chars_arr[num()].rand_step());
-                            size--;
-                        }
-                        return str;
-                    }
-             
-                    function randStr(range, size){
-                    
-                        var parse_range = (range.source).match(/.*\[(.[^\]]*)\].*/);
-                        
-                        if(!parse_range) throw argTypeError(arguments, 'Wait arguments: range(RegExp(/[\w]/)), size(0<=number)');
-                        
-                        var chars = parseRange(parse_range[1]);
-                        
-                        return randChars.bind(null, chars, size);
-                    
-                    
-                    }
-                    
-                    function testStr(range, size){
-                        return function(str){return  typeof(str) == 'string' && (str.length <= size) && range.test(str);}
-                    }
-                    
-                    function docStr(range, size){
-                        return Doc.genDoc.bind(null, "str", { range: range, length: size});
-                    }
-                    
-                    var def_size = Doc.getConst('str', 'length');
-                    var def_range = Doc.getConst('str', 'range');
-                    
-                    function newStr(range, size){
-                        if(range === null) range = def_range;
-                        if(size === undefined) size = def_size;
-                        
-                        if(typeof(range) == "string") range = new RegExp(range);
-                        if(!T.pos.test(size) || !(range instanceof RegExp)){
-                                throw argTypeError(arguments, 'Wait arguments: range(RegExp), size(0<=number)');
-                        }
-                            
-                        return {
-                            rand: randStr(range, size),
-                            test: testStr(range, size),
-                            doc: docStr(range, size)
-                        };
-                    }
-                    
-                    
-                    
-                    this.str = new CreateCreator(
-						newStr, 
-						testStr(def_range, def_size), 
-						randStr(def_range, def_size), 
-						docStr(def_range, def_size)
-					);
-				
                 
-                
-                //Craft Array
-                
-                    function randIndex(){
-                        var rand = T.pos(this.length - 1).rand;
-                        return this[rand()];
-                    }
-                    Array.prototype._addConst('rand', randIndex);
-                    
-                    
-                    function createArr(val, length, is_call){
-                        var arr = [];
-                        
-                        if(!length) length = 1;
-                        
-                        if(typeof val == 'function' && is_call){
-                            for(var i = 0; i < length; i++){
-                                arr.push(val(i, arr));
-                            }
-                        }else{
-                            
-                            for(var i = 0; i < length; i++){
-                                arr.push(val);
-                            }
-                        }
-                        
-                        return arr;
-                    }
-                    Array._addConst('create', createArr);
-                    
-                    
-                    function randArray(Type, size, is_fixed){
-                        var randSize = function (){return size};
-                        if(!is_fixed){
-                            randSize = T.pos(size).rand;
-                        }
-                        
-                        
-                        if(Array.isArray(Type)){
-                            var now_size = randSize();
-                            
-                            return function(){
-                                var arr = [];
-                                var type_size = Type.length;
-                                
-                                for(var i = 0, j = 0; i < now_size; i++){
-                                    
-                                    arr.push(Type[j].rand());
-                                    
-                                    j++;
-                                    if(j >= type_size){
-                                        j = 0;
-                                    } 
-                                }
-                                return arr;
-                            }
-                        }
-                        
-                        
-                        
-                        return function(){
-                            var arr = [];
-                            
-                            var push = arr.push;
-                            arr.push = function(val){if(arr.length === size || !Type.test(val)){return false}; push.call(arr, val); return arr.length;}
-                            
-                            var now_size = randSize();
-                            for(var i = 0; i < now_size; i++){
-                                arr.push(Type.rand(i, arr));
-                            }
-                            
-                            return arr;
-                        }
-                        
-                    }
-                    
-                    function testArray(Type, size, is_fixed){
-                        
-                        if(Array.isArray(Type)){
-                            return function(arr){
-                                var right = (arr.length === Type.length) || !is_fixed;
-                                
-                                if(right){
-                                    for(var i = 0; i < arr.length; i++){
-                                        right = right && Type[i].test(arr[i]);
-                                    }
-                                }
-                                return right;
-                            }
-                        }
-                        
-                        return function(arr){
-                            if( (!Array.isArray(arr)) || (arr.length > size) || (is_fixed&&(arr.length !== size)) ) return false;
-                            return arr.every(Type.test);
-                        }
-                    }
-                    
-                    function docArray(Type, size, is_fixed){
-						var type_docs = [];
-                        if(Array.isArray(Type)){
-                            var cont = Type.length;
-                            for(var i = 0; i < cont; i++){
-                                type_docs.push(Type[i].doc());  
-                            }
-                        }else{
-                            type_docs = Type.doc();
-                        }
-                        
-                        return Doc.genDoc.bind(null, "arr", {types: type_docs, size: size, fixed: is_fixed});
-                        
-                    }
-                    
-                    
-                    var def_Type = Doc.getConst('arr', 'types');
-                    var def_Size = Doc.getConst('arr', 'size');
-                    var def_fixed = Doc.getConst('arr', 'fixed');
-                    
-                    function newArray(Type, size, is_fixed){
-                        if(Type === null) Type = def_Type;
-                        if(is_fixed === undefined) is_fixed = def_fixed;
-                        
-                        if(Array.isArray(Type)){
-                            if((size === undefined||size === null) && is_fixed) size = Type.length;
-                            
-                            Type.forEach(function(item, i, arr){arr[i] = tConst(item);}); 
-                        }else{
-                            if((size === undefined||size === null) && is_fixed) size = 1;
-                            Type = tConst(Type);
-                        }
-                        
-                        if(!T.pos.test(size)){
-                                throw argTypeError(arguments, 'Wait arguments: Type||null, size(0<=number<2e+6)||null||undefined, is_fixed(boolean||undefined)');
-                        }
-                        
-                        return {
-                            test: testArray(Type, size, is_fixed),
-                            rand: randArray(Type, size, is_fixed),
-                            doc: docArray(Type, size, is_fixed)
-                        };
-                    }
-                    
-                    this.arr = new CreateCreator(
-						newArray, 
-						testArray(def_Type, def_Size, def_fixed), 
-						randArray(def_Type, def_Size, def_fixed), 
-						docArray(def_Type, def_Size, def_fixed)
-					);
-                    
-                    
-				
-                
-                //Craft Any
+              //Craft Any
                     function randAny(arr){
                         return function(){
-                            return arr.rand().rand();
+                            return arr.rand_i().rand();
                         }
                     }
                   
@@ -881,6 +403,139 @@
 						randAny(def_types), 
 						docAny(def_types)
 					);
+				
+                
+                
+                //Craft Array
+                
+                    
+                    
+                    function randArray(Type, size, is_fixed){
+                        var randSize = function (){return size};
+                        if(!is_fixed){
+                            randSize = T.pos(size).rand;
+                        }
+                        
+                        
+                        if(Array.isArray(Type)){
+                            var now_size = randSize();
+                            
+                            return function(){
+                                var arr = [];
+                                
+                                for(var i = 0, j = 0; i < now_size; i++){
+                                    
+                                    arr.push(Type[j].rand());
+                                    
+                                    j++;
+                                    if(j >= Type.length){
+                                        j = 0;
+                                    } 
+                                }
+                                return arr;
+                            }
+                        }
+                        
+                        
+                        
+                        return function(){
+                            var arr = [];
+                            
+                            var push = arr.push;
+                            arr.push = function(val){if(arr.length === size || !Type.test(val)){return false}; push.call(arr, val); return arr.length;}
+                            
+                            var now_size = randSize();
+                            for(var i = 0; i < now_size; i++){
+                                arr.push(Type.rand(i, arr));
+                            }
+                            
+                            return arr;
+                        }
+                        
+                    }
+                    
+                    function testArray(Type, size, is_fixed){
+                        
+                        if(Array.isArray(Type)){
+                            return function(arr){
+                                var right = ( Array.isArray(arr) && (arr.length <= size) && (!is_fixed || (arr.length === size)) );
+                                
+                                if(right){
+                                    for(var i = 0, j = 0; i < arr.length; i++){
+										
+										right = right && Type[j].test(arr[i]);
+										
+										j++;
+										if(j >= Type.length){
+											j = 0;
+										} 
+									}
+                                }
+                                return right;
+                            }
+                        }
+                        
+                        return function(arr){
+                            if( (!Array.isArray(arr)) || (arr.length > size) || (is_fixed&&(arr.length !== size)) ) return false;
+                            return arr.every(Type.test);
+                        }
+                    }
+                    
+                    function docArray(Type, size, is_fixed){
+						var type_docs = [];
+                        if(Array.isArray(Type)){
+                            var cont = Type.length;
+                            for(var i = 0; i < cont; i++){
+                                type_docs.push(Type[i].doc());  
+                            }
+                        }else{
+                            type_docs = Type.doc();
+                        }
+                        
+                        return Doc.genDoc.bind(null, "arr", {types: type_docs, size: size, fixed: is_fixed});
+                        
+                    }
+                    
+                    
+                    var def_Type = Doc.getConst('arr', 'types');
+                    var def_Size = Doc.getConst('arr', 'size');
+                    var def_fixed = Doc.getConst('arr', 'fixed');
+                    
+                    function newArray(Type, size, is_fixed){
+                        if(Type === null) Type = def_Type;
+                        if(is_fixed === undefined) is_fixed = def_fixed;
+                        
+                        if(Array.isArray(Type)){
+                            if(size === undefined||size === null) size = Type.length;
+                            
+                            Type = Type.map(function(item){return tConst(item);}); 
+                        }else{
+                            if(size === undefined||size === null) size = 1;
+                            Type = tConst(Type);
+                        }
+                        
+                        if(!T.pos.test(size)){
+                                throw argTypeError(arguments, 'Wait arguments: Type||null, size(0<=number<2e+6)||null||undefined, is_fixed(boolean||undefined)');
+                        }
+                        
+                        return {
+                            test: testArray(Type, size, is_fixed),
+                            rand: randArray(Type, size, is_fixed),
+                            doc: docArray(Type, size, is_fixed)
+                        };
+                    }
+                    
+                    this.arr = new CreateCreator(
+						newArray, 
+						testArray(def_Type, def_Size, def_fixed), 
+						randArray(def_Type, def_Size, def_fixed), 
+						docArray(def_Type, def_Size, def_fixed)
+					);
+                    
+                    
+				
+                
+                
                 
                 
                 //Craft Object
@@ -941,80 +596,7 @@
                 
                 
                 
-                //Craft Function
-                    
-                    function randFunc(context, input, output){
-                        return function(){
-                            return (function(){
-                                var arg_arr = [];
-                                for(var i = 0; i < arguments.length; i++){
-                                    arg_arr.push(arguments[i]);
-                                }
-                                
-                                if(!input(arg_arr)){
-                                    throw argTypeError(arguments);
-                                }
-                                return output();
-                            }).bind(context());
-                        }
-                    }
-                    
-                    function testFunc(context, input, output){
-                        return function(func, value){
-                            if(typeof(func) !== "function") return false;
-                            var len = 10;
-                            if(T.pos.test(value)&&value < 8)  len = Math.pow(10, value);
-                            
-                            var right = true;
-                            while(len && right){
-                                len--;
-                                right = right && output(func.apply(context(), input()));
-                            }
-                            return right;
-                        }
-                    }
-                    
-                    function docFunc(context, input, output){
-							
-                        return Doc.genDoc.bind(null, "func", { context: context.doc(), input: input.doc(), output: output.doc()});
-                    }
-                    
-                    var def_Cont = tConst(Doc.getConst('func', 'context'));
-                    var def_in = T.arr(Doc.getConst('func', 'input'), null);
-                    var def_out = Doc.getConst('func', 'output');
-                    
-                    function newFunc(context, input, output, variat){
-                        if(context === undefined) context = def_Cont;
-                        if(input === undefined||input === null) input = def_in;
-                        if(output === undefined) context = def_out;
-                        
-                        context = tConst(context);
-                        
-                        var size = null;
-                        if(Array.isArray(input) && variat){
-                            var size = input.length;
-                        }
-                        input = T.arr(input, size, !variat);
-                        
-                        output = tConst(output);
-                        
-                        return{
-                            test: testFunc(context.rand, input.rand, output.test),
-                            rand: randFunc(context.rand, input.test, output.rand),
-                            doc: docFunc(context, input, output)
-                        }
-                    }
-                    var tmp_obj = {
-						test: function(func){return typeof(func) === "function"},
-						rand: function(){return function(){}},
-						doc: Doc.genDoc.bind(null, "func")
-					};
-                    this.func = new CreateCreator(
-						function(){return tmp_obj}, 
-						tmp_obj.test,
-						tmp_obj.rand,
-						tmp_obj.doc
-					);
+                
                 
             //Craft Type out to  Document
                 
@@ -1024,7 +606,11 @@
 				}
 				
 				this.outDoc = function(tmp){
-					if(!('Name' in tmp)) throw new Error();
+					if((typeof tmp === "function") && tmp.is_creator) return tmp;
+					
+					if(!('Name' in tmp)){
+						throw new Error();
+					}
 					var type = tmp.Name;
 					
 					if('Params' in tmp){
