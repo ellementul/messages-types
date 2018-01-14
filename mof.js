@@ -91,4 +91,14 @@
 		return arr;
 	}
 	Array.addConstProp('create', createArr);
+	
+	
+	if(RegExp.prototype.toJSON !== "function"){
+		RegExp.prototype.toJSON = function(){ return this.source; };
+	}
+
 })();
+
+
+
+

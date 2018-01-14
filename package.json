@@ -1,0 +1,23 @@
+{
+  "name": "typesjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "types.js",
+  "scripts": {
+    "test": "node ./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ellementul/typesjs.git"
+  },
+  "keywords": [
+    "types",
+    "tests"
+  ],
+  "author": "ellementul",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ellementul/typesjs/issues"
+  },
+  "homepage": "https://github.com/ellementul/typesjs#readme"
+}
