@@ -46,7 +46,8 @@
 				i++;
 				var end_char = parse_str[i];
 				
-				result.concat(rangeInArr(beg_char.charCodeAt(0), end_char.charCodeAt(0)));
+				var arr_chars = rangeInArr(beg_char.charCodeAt(0), end_char.charCodeAt(0));
+				result = result.concat(arr_chars);
 				
 				i++;
 			}else{
@@ -62,7 +63,7 @@
 		size = T.int(size, 1).rand();
 		var str = '';
 		while(size){
-			str +=String.fromCharCode(chars_arr.rand_i);
+			str +=String.fromCharCode(chars_arr.rand_i());
 			size--;
 		}
 		return str;
@@ -82,15 +83,18 @@
 	}
 
 	function testStr(range, size){
-		return function(str){return  typeof(str) == 'string' && (str.length <= size) && range.test(str);}
+		return function(str){
+			return  typeof(str) == 'string' && (str.length <= size) && range.test(str);
+		}
 	}
 
 	function docStr(range, size){
 		return T.doc.gen.bind(null, "str", { range: range, length: size});
 	}
-
+	
+	
 	var def_size = 17;
-	var def_range = /[w]/;
+	var def_range = /[\w]/;
 
 	function newStr(range, size){
 		if(range === null) range = def_range;
@@ -110,7 +114,16 @@
 
 
 
-	T.newType('str', 'String', {
+	T.newType('str',
+	{
+		name: "String",
+		arg: ["range", "length"],
+		params: {
+				range: {type: 'RegExp || str', default_value: def_range}, 
+				length: {type: 'pos', default_value: def_size}
+		}
+	},
+	{
 		New: newStr, 
 		test: testStr(def_range, def_size), 
 		rand: randStr(def_range, def_size), 

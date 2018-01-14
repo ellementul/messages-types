@@ -66,6 +66,9 @@ console.info();
 
 var tmp_doc = obj_type.doc();
 console.log("Восстановление типа по документации: " + revisType(T.outDoc(tmp_doc), 10));
+console.info();
+require("./test_str.js");
+
 
 function revisType(type, count){
 	
@@ -74,7 +77,7 @@ function revisType(type, count){
 		if(!type.test(value)){
 			console.log("Проверяющий тип: ");
 			console.log(type.doc());
-			console.log("Не проешедшее проверку значение: " + value);
+			console.log("Не прошедшее проверку значение: " + value);
 			return false;
 		}
 	}

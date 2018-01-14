@@ -142,13 +142,12 @@ require('./mof.js');
 				
 				return creator;
 			}
-			this.newType = function(key, name, new_type){
-				Doc.types[key] = {name: name};
+			this.newType = function(key, desc, new_type){
+				Doc.types[key] = desc;
+				T.names[desc.name] = key;
+				this.doc.json = JSON.stringify(Doc, "", 2);
 				
 				this[key] = new CreateCreator(new_type.New, new_type.test, new_type.rand, new_type.doc);
-				
-				Doc.types[key] = new_type.doc();
-				this.doc.json = JSON.stringify(Doc, "", 2);
 			}
 			this.newType.doc = '(name, constructor, funcTest, funcRand, funcDoc)';
 			
