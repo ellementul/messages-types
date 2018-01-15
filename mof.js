@@ -66,7 +66,7 @@
 	}
 	
 	function randIndex(){
-		var rand = Math.floor(this.length * Math.random() - 0.001);
+		var rand = Math.round((this.length - 1) * Math.random());
 		return this[rand];
 	}
 	Array.prototype.addConstProp('rand_i', randIndex);

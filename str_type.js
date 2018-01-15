@@ -63,7 +63,8 @@
 		size = T.int(size, 1).rand();
 		var str = '';
 		while(size){
-			str +=String.fromCharCode(chars_arr.rand_i());
+			var der = chars_arr.rand_i();
+			str +=String.fromCharCode(der);
 			size--;
 		}
 		return str;
@@ -71,9 +72,9 @@
 
 	function randStr(range, size){
 
-		var parse_range = (range.source).match(/.*\[(.[^\]]*)\].*/);
+		var parse_range = (range.source).match(/\^\[((\\\]|.)*)\]\*\$/);
 		
-		if(!parse_range) throw argTypeError(arguments, 'Wait arguments: range(RegExp(/[\w]/)), size(0<=number)');
+		if(!parse_range) throw T.error(arguments, 'Wait arguments: range(RegExp(/^[\w].$/)), size(0<=number)');
 		
 		var chars = parseRange(parse_range[1]);
 		
@@ -94,15 +95,17 @@
 	
 	
 	var def_size = 17;
-	var def_range = /[\w]/;
+	var def_range = /^[\w]*$/;
 
 	function newStr(range, size){
 		if(range === null) range = def_range;
 		if(size === undefined) size = def_size;
 		
-		if(typeof(range) == "string") range = new RegExp(range);
+		if(typeof range == "string") range = new RegExp(range);
+		
+		
 		if(!T.pos.test(size) || !(range instanceof RegExp)){
-				throw argTypeError(arguments, 'Wait arguments: range(RegExp), size(0<=number)');
+				throw T.error(arguments, 'Wait arguments: range(RegExp), size(0<=number)');
 		}
 			
 		return {

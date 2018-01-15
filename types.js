@@ -107,6 +107,7 @@ require('./mof.js');
 					return str_args;
 				}
 			}
+			T.error = argTypeError;
 			
 			function typeSyntaxError(wrong_str, mess){
 				if(mess === undefined) mess = '';

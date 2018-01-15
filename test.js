@@ -78,7 +78,7 @@ function revisType(type, count){
 			console.log("Проверяющий тип: ");
 			console.log(type.doc());
 			console.log("Не прошедшее проверку значение: " + value);
-			return false;
+			throw new Error("Тесты закончились неудачей!");
 		}
 	}
 	
