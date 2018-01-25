@@ -1,7 +1,9 @@
 'use strict';
 new (function(){
 	if(typeof(Object.addConstProp) !== "function"){
-		throw new Error("Требуеться библиотека mof.js");
+		if(typeof module == "object"){
+			require("./mof.js");
+		}else throw new Error("Требуеться библиотека mof.js");
 	}
 		
 	if(typeof(Object.types) == "object"){
