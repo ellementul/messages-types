@@ -266,7 +266,7 @@ new (function(){
 		
 		var randInt = function(max, min, precis){
 			return function(){
-				return Math.floor( ((max - min)/precis)*Math.random() ) * precis +  min;
+				return Math.floor( ((max - (min + 0.1))/precis)*Math.random() ) * precis +  min;
 			}
 		};
 		
@@ -276,7 +276,7 @@ new (function(){
 					return false;
 				}
 				 
-				if((n > max)
+				if((n >= max)
 					||(n < min)
 					||(((n - min) % precis) !== 0) ){
 					return false;

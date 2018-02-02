@@ -8,9 +8,10 @@
 	var T = Object.types;
 
 	console.info("Тестирование чисел: ");
-
-	var pos = T.pos(T.pos.rand());
-	console.info("	Индексовых: " + revisType(pos, 1000) );
+	
+	var rand_limit = T.pos.rand();
+	var pos = T.pos(rand_limit);
+	console.info("	Индексовых: " + (revisType(pos, 1000) && !pos.test(rand_limit)) );
 
 	var int = T.int(T.int.rand(), T.int.rand(), T.int(null, 1).rand());
 	console.info("	Целых: " + revisType(int, 10000) );
@@ -75,7 +76,6 @@
 
 
 	function revisType(type, count){
-		
 		while(count--){
 			var value = type.rand();
 			if(!type.test(value)){

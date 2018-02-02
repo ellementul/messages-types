@@ -76,6 +76,7 @@
 		var arr = [];
 		
 		if(!length) length = 1;
+		if(is_call === undefined) is_call = true;
 		
 		if(typeof val == 'function' && is_call){
 			for(var i = 0; i < length; i++){
