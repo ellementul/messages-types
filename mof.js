@@ -91,6 +91,33 @@
 		
 		return arr;
 	}
+	
+	Array.prototype.addConstProp('add', function(val){
+		if(!this._nulls) this._nulls = [];
+		
+		if(this._nulls.length){
+			var ind = this._nulls.pop();
+			this[ind] = val;
+		}else{
+			this.push(val);
+		}
+	});
+	
+	Array.prototype.addConstProp('dell', function(ind){
+		if(ind > this.length -1) return false;
+		
+		if(ind == this.length -1){
+			this.pop();
+		}else{
+			if(!this._nulls) this._nulls = [];
+			
+			this[ind] = undefined;
+			this._nulls.push(ind);
+		}
+		
+		return true;	
+	});
+	
 	Array.addConstProp('create', createArr);
 	
 	
