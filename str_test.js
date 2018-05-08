@@ -21,17 +21,18 @@
 
 
 	function revisType(type, count){
-		
 		while(count--){
 			var value = type.rand();
-			if(!type.test(value)){
+			var test_value = type.test(value);
+			if(test_value){
 				console.log("Проверяющий тип: ");
 				console.log(type.doc());
 				console.log("Не прошедшее проверку значение: " + value);
+				console.log("Вывод ошибки: " +  JSON.stringify(test_value));
 				throw new Error("Тесты закончились неудачей!");
 			}
 		}
-		
+
 		return true;
 	}
 })();

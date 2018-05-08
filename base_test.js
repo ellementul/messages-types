@@ -8,10 +8,12 @@
 	var T = Object.types;
 
 	console.info("Тестирование чисел: ");
-	
+
 	var rand_limit = T.pos.rand();
 	var pos = T.pos(rand_limit);
-	console.info("	Индексовых: " + (revisType(pos, 1000) && !pos.test(rand_limit)) );
+	//Этот тип предназначен для индексирования, поэтому важно чтобы индекс на границе диапазона не считался валидным.
+	console.info("	Индексовых: " + (revisType(pos, 1000) && !!pos.test(rand_limit)) );
+
 
 	var int = T.int(T.int.rand(), T.int.rand(), T.int(null, 1).rand());
 	console.info("	Целых: " + revisType(int, 10000) );
@@ -50,7 +52,7 @@
 	};
 	var ter = 17;
 	while(ter--){
-		
+
 		tmp_obj["" + T.pos(111).rand()] = valOrType(types_arr.rand_i());
 	}
 	var obj_type = T.obj(tmp_obj);
@@ -75,17 +77,20 @@
 	console.info();
 
 
+
 	function revisType(type, count){
 		while(count--){
 			var value = type.rand();
-			if(!type.test(value)){
+			var test_value = type.test(value);
+			if(test_value){
 				console.log("Проверяющий тип: ");
 				console.log(type.doc());
 				console.log("Не прошедшее проверку значение: " + value);
+				console.log("Вывод ошибки: " +  JSON.stringify(test_value));
 				throw new Error("Тесты закончились неудачей!");
 			}
 		}
-		
+
 		return true;
 	}
 })();
