@@ -98,8 +98,9 @@
 		if(this._nulls.length){
 			var ind = this._nulls.pop();
 			this[ind] = val;
+			return ind;
 		}else{
-			this.push(val);
+			return this.push(val);
 		}
 	});
 	
