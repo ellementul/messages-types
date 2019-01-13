@@ -100,7 +100,7 @@
 			this[ind] = val;
 			return ind;
 		}else{
-			return this.push(val);
+			return this.push(val) - 1;
 		}
 	});
 	
