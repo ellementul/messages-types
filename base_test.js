@@ -52,7 +52,7 @@
 	var ter = 17;
 	while(ter--){
 
-		tmp_obj["" + T.pos(111).rand()] = valOrType(types_arr.rand_i());
+		tmp_obj["" + T.pos(111).rand()] = valOrType(randIndex(types_arr));
 	}
 	var obj_type = T.obj(tmp_obj);
 	console.log("Тестирование объектов: " + revisType(obj_type, 10));
@@ -75,7 +75,10 @@
 	console.log("Восстановление типа по документации: " + revisType(T.outDoc(tmp_doc), 10));
 	console.info();
 
-
+	function randIndex(arr){
+		var rand = Math.round((arr.length - 1) * Math.random());
+		return arr[rand];
+	}
 
 	function revisType(type, count){
 		while(count--){

@@ -59,11 +59,16 @@
 		return result;
 	}
 
+	function randIndex(arr){
+		var rand = Math.round((arr.length - 1) * Math.random());
+		return arr[rand];
+	}
+
 	function randChars(chars_arr, size){
 		size = T.int(size, 1).rand();
 		var str = '';
 		while(size){
-			var der = chars_arr.rand_i();
+			var der = randIndex(chars_arr);
 			str +=String.fromCharCode(der);
 			size--;
 		}
