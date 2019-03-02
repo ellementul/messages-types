@@ -10,6 +10,10 @@ new (function(){
 		return Object.types;
 	}
 
+	if(RegExp.prototype.toJSON !== "function"){
+		RegExp.prototype.toJSON = function(){ return this.source; };
+	}
+
 	var T = this;
 	var Doc = {
 		types:{
@@ -124,20 +128,18 @@ new (function(){
 		if(typeof New === "function"){
 			creator = function(){
 				var tmp_obj = New.apply({}, arguments);
-				var new_creator = new CreateCreator(New);
-				for(var key in tmp_obj){
-					new_creator.addConstProp(key, tmp_obj[key]);
-				}
+				var new_creator = new CreateCreator(New, tmp_obj.test, tmp_obj.rand, tmp_obj.doc);
+				
 				return new_creator;
 			};
 		}else creator = function(){return creator};
 
-		creator.addConstProp('is_creator', true);
-		if(typeof test === "function") creator.addConstProp('test', test);
-		if(typeof rand === "function") creator.addConstProp('rand', rand);
-		if(typeof doc === "function") creator.addConstProp('doc', doc);
+		creator.is_creator = true;
+		if(typeof test === "function") creator.test = test;
+		if(typeof rand === "function") creator.rand = rand;
+		if(typeof doc === "function") creator.doc = doc;
 
-		return creator;
+		return Object.freeze(creator);
 	}
 	this.newType = function(key, desc, new_type){
 		Doc.types[key] = desc;
@@ -365,9 +367,14 @@ new (function(){
 
 
   //Craft Any
+  		function randIndex(arr){
+			var rand = Math.round((arr.length - 1) * Math.random());
+			return arr[rand];
+		}
+
 		function randAny(arr){
 			return function(){
-				return arr.rand_i().rand();
+				return randIndex(arr).rand();
 			}
 		}
 

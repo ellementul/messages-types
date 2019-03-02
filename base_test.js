@@ -1,7 +1,6 @@
 "use strict";
 (function(){
 	if(typeof module == "object"){
-		require("./mof.js");
 		require("./types.js");
 	}
 
