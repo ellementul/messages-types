@@ -598,7 +598,7 @@ new (function(){
 		function testObj(funcObj){
 			return function(obj){
 
-				if(typeof obj !== "object" && obj === null){
+				if(typeof obj !== "object" || obj === null ){
 					var err = this.doc();
 					err.params = "Value is not object!";
 					return err;
