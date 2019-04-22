@@ -130,9 +130,9 @@ new (function(){
 		}else creator = function(){return creator};
 
 		creator.is_creator = true;
-		if(typeof test === "function") creator.test = test;
-		if(typeof rand === "function") creator.rand = rand;
-		if(typeof doc === "function") creator.doc = doc;
+		if(typeof test === "function") creator.test = test.bind(creator);
+		if(typeof rand === "function") creator.rand = rand.bind(creator);
+		if(typeof doc === "function") creator.doc = doc.bind(creator);
 
 		return Object.freeze(creator);
 	}
@@ -143,7 +143,7 @@ new (function(){
 
 		this[key] = new CreateCreator(new_type.New, new_type.test, new_type.rand, new_type.doc);
 	}
-	this.newType.doc = '(name, constructor, funcTest, funcRand, funcDoc)';
+	this.newType.doc = '(name, constructor, {New: funcTest, rand: funcRand, doc: funcDoc})';
 
 
 

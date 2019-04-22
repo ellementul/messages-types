@@ -6,6 +6,10 @@
 
 	var T = Object.types;
 
+	var tested_obj = {};
+	var tests_arr = [T.obj({a: 1}).test];
+	console.log("	Check binding type functions: " + !!tests_arr[0](tested_obj));
+
 	console.info("Тестирование чисел: ");
 
 	var rand_limit = T.pos.rand();
