@@ -604,7 +604,7 @@ new (function(){
 					return err;
 				}
 
-				for(var key in funcObj){
+				for(var key in obj){
 					var res = funcObj[key].test(obj[key]);
 					if(res){
 						var err = this.doc();
