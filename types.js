@@ -609,7 +609,7 @@ new (function(){
 					if(!res){
 						var err = this.doc();
 						err.params = {};
-						err.params[key] = res;
+						err.params[key] = "Not value!";
 						return err;
 					}
 				}
