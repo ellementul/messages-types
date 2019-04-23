@@ -605,7 +605,10 @@ new (function(){
 				}
 
 				for(var key in obj){
-					var res = funcObj[key].test(obj[key]);
+					var res = true;
+					if(funcObj[key]) 
+						res = funcObj[key].test(obj[key]);
+
 					if(res){
 						var err = this.doc();
 						err.params = {};
