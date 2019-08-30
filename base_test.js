@@ -45,7 +45,7 @@
 	console.info();
 
 
-	var tmp_obj = {};
+	var originObj = {};
 	var valOrType = function(type, is_val){
 		if(is_val){
 			return type.rand();
@@ -53,29 +53,34 @@
 			return type;
 		}
 	};
-	var ter = 17;
-	while(ter--){
 
-		tmp_obj["" + T.pos(111).rand()] = valOrType(randIndex(types_arr));
-	}
-	var obj_type = T.obj(tmp_obj);
-	console.log("Тестирование объектов: " + revisType(obj_type, 10));
-	console.log("	Одноуровневнего: " + revisType(obj_type, 10));
+	var count_keys = 17;
+	while(count_keys--)
+		originObj["" + T.pos(111).rand()] = valOrType(randIndex(types_arr));
+	
+	var objType = T.obj(originObj);
+	console.log("Тестирование объектов: ");
+	console.log("	Одноуровневнего: " + revisType(objType, 10));
 
-	tmp_obj.recur1 = obj_type;
-	obj_type = T.obj(tmp_obj);
-	console.log("	Двухуровневнего: " + revisType(obj_type, 10));
 
-	tmp_obj.recur2 = obj_type;
-	obj_type = T.obj(tmp_obj);
-	console.log("	Трехуровневого: " + revisType(obj_type, 10));
+	originObj.intoType = objType;
+	originObj.intoObj = {a: 67};
+	originObj.intoSecondObj = {a: objType, b: {ert: 53, gert: {gert: 456}}};
 
-	obj_type = T.obj({a: tmp_obj, b: tmp_obj.recur2, c: tmp_obj.recur1});
-	console.log("	Многоуровневого: " + revisType(obj_type, 10));
+	objType = T.obj(originObj);
+	console.log("	Многоуровневого: " + revisType(objType, 10));
+
+	originObj.intoObj = {a: 67, cyc: originObj};
+	originObj.intoSecondObj = {a: objType, b: {ert: 53, gert: {gert: 456}, cyc: originObj}};
+
+	objType = T.obj(originObj);
+	console.log("	С циклическими ссылками: " + revisType(objType, 10));  
 	console.info();
 
 
-	var tmp_doc = obj_type.doc();
+
+
+	var tmp_doc = objType.doc();
 	console.log("Восстановление типа по документации: " + revisType(T.outDoc(tmp_doc), 10));
 	console.info();
 
@@ -91,7 +96,7 @@
 			if(test_value){
 				console.log("Проверяющий тип: ");
 				console.log(type.doc());
-				console.log("Не прошедшее проверку значение: " + value);
+				console.log("Не прошедшее проверку значение: " + JSON.stringify(value));
 				console.log("Вывод ошибки: " +  JSON.stringify(test_value));
 				throw new Error("Тесты закончились неудачей!");
 			}

@@ -187,7 +187,7 @@ new (function(){
 		var def_const = newConst(Doc.getConst('const', 'value'));
 		this.const = new CreateCreator(newConst, def_const.test, def_const.rand, def_const.doc);
 
-		function tConst(Type){
+		function tConst(Type, ObjsStack){
 			if(typeof (Type) !== "function" || !Type.is_creator){
 				if(Array.isArray(Type)){
 
@@ -195,7 +195,7 @@ new (function(){
 
 				}else if(typeof(Type) == "object" && Type !== null){
 
-					return T.obj(Type);
+					return T.obj(Type, ObjsStack);
 
 				}else return T.const(Type);
 			}else{
@@ -638,13 +638,31 @@ new (function(){
 			return Doc.genDoc.bind(null, "obj", {types: doc_obj});
 		}
 
-		function NewObj(tempObj){
-			if(typeof tempObj !== 'object') throw argTypeError(arguments, 'Wait arguments: tempObj(Object)');
+		var DefTypeObj = {
+			test: function(obj){return typeof obj !== "object"},
+			rand: randObj({}),
+			doc: Doc.genDoc.bind(null, "obj")
+		};
 
-			var begObj = {};
+		function NewObj(tempObj, objsStack){
+			if(!tempObj)
+				return DefTypeObj;
+
+			if(!objsStack)
+				objsStack = [];
+
+			if(objsStack.indexOf(tempObj) !== -1)
+				return DefTypeObj;
+
+			if(typeof tempObj !== 'object') 
+				throw argTypeError(arguments, 'Wait arguments: tempObj(Object)');
+
+			
 			var funcObj = {};
+			objsStack.push(tempObj);
+
 			for(var key in tempObj){
-				funcObj[key] = tConst(tempObj[key]);
+				funcObj[key] = tConst(tempObj[key], objsStack);
 			}
 
 			return{
@@ -653,8 +671,9 @@ new (function(){
 				doc: docOb(funcObj)
 			}
 		}
+
 		this.obj = new CreateCreator(NewObj,
-			function(obj){return typeof obj === "object"},
+			function(obj){return typeof obj !== "object"},
 			randObj({}),
 			Doc.genDoc.bind(null, "obj")
 		);
@@ -678,14 +697,15 @@ new (function(){
 		}
 		var type = tmp.name;
 
-		if('params' in tmp){
+		if(('params' in tmp) && tmp.params){
 			var params = tmp.params;
 			switch(T.names[type]){
 				case 'obj': {
 					var new_obj = {};
-					for(var key in params.types){
+
+					for(var key in params.types)
 						new_obj[key] = T.outDoc(params.types[key]);
-					}
+					
 					params.types = new_obj;
 					break;
 				}
