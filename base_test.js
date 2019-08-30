@@ -57,6 +57,7 @@
 	var count_keys = 17;
 	while(count_keys--)
 		originObj["" + T.pos(111).rand()] = valOrType(randIndex(types_arr));
+		originObj.str = "th12rh345";
 	
 	var objType = T.obj(originObj);
 	console.log("Тестирование объектов: ");
@@ -69,6 +70,13 @@
 
 	objType = T.obj(originObj);
 	console.log("	Многоуровневого: " + revisType(objType, 10));
+
+
+	originObj.arr = [{gert: 456}, objType, {ert: 53, gert: {gert: 456}}, 4, 5, "str"]
+
+	objType = T.obj(originObj);
+	console.log("	Многоуровневого с массивами: " + revisType(objType, 10));
+
 
 	originObj.intoObj = {a: 67, cyc: originObj};
 	originObj.intoSecondObj = {a: objType, b: {ert: 53, gert: {gert: 456}, cyc: originObj}};

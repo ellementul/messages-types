@@ -17,7 +17,7 @@
 	console.info();
 
 	var str_type = T.str('^[0-9a-zA-Z-]*$', 100);
-	console.info("Генерация и обратимость документации: " + revisType(T.outDoc(str_type.doc()), 100));
+	console.info("	Генерация и обратимость документации: " + revisType(T.outDoc(str_type.doc()), 100));
 
 
 	function revisType(type, count){

@@ -73,8 +73,8 @@ new (function(){
 			return this.types[name_type].params[name_limit].default_value;
 		}
 	};
-	this.doc = {};
-	this.doc.json = JSON.stringify(Doc, "", 2);
+	this.doc = {native: Doc};
+	this.doc.toJSON = function(){return JSON.stringify(Doc, "", 2)};
 
 	Doc.genDoc = (function(name, params){return {name: this.types[name].name, params: params}}).bind(Doc);
 	this.doc.gen = Doc.genDoc;
@@ -191,7 +191,7 @@ new (function(){
 			if(typeof (Type) !== "function" || !Type.is_creator){
 				if(Array.isArray(Type)){
 
-					return T.arr(Type);
+					return T.obj(Type, ObjsStack);
 
 				}else if(typeof(Type) == "object" && Type !== null){
 
@@ -716,6 +716,12 @@ new (function(){
 					}else params.types = T.outDoc(params.types);
 				}
 			}
+
+			if(T.swit && T.names[type] == "swit")
+				for(var key in params.types_object)
+					params.types_object[key] = T.outDoc(params.types_object[key]);
+			
+
 			return getSimpleType(T.names[type], params);
 		}
 		return getSimpleType(T.names[type], {});
