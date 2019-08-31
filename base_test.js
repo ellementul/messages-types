@@ -86,8 +86,6 @@
 	console.info();
 
 
-
-
 	var tmp_doc = objType.doc();
 	console.log("Восстановление типа по документации: " + revisType(T.outDoc(tmp_doc), 10));
 	console.info();

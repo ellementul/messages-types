@@ -11,6 +11,26 @@
 	console.info('-----------------------------------------------------');
 	console.info("Тестирование SwitchType: ");
 	console.info("	Тестирование значения по умолчанию: " + revisType(TypeSwit, 1));
+
+	var switch_key = "type_key";
+
+	var typeOne = T.obj({
+		type_key: "One",
+		reset: 1234
+	});
+
+	var typeTwo = T.obj({
+		type_key: "Two",
+		reset: {
+			ru: "Ret",
+			tret: 1234,
+		}
+	});
+
+	var types_arr = [typeOne, typeTwo];
+	TypeSwit = T.swit(switch_key, types_arr);
+
+	console.info("	Тестирование кастомных обьектов: " + revisType(TypeSwit, 100));
 	console.info();
 
 

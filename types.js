@@ -82,7 +82,7 @@ new (function(){
 
 
 
-	//Erros
+	//Erros------------------------------------------------------------------------------------------------
 	function argTypeError(wrong_arg, mess){
 		if(mess === undefined) mess = '';
 		var ER = new TypeError('Argument type is wrong! Arguments(' + forArg(wrong_arg) + ');' + mess);
@@ -116,7 +116,7 @@ new (function(){
 		return ER;
 	}
 
-
+//------Core--------------------------------------------------------------------------------
 
 	function CreateCreator(New, test, rand, doc){
 		var creator;
@@ -130,9 +130,22 @@ new (function(){
 		}else creator = function(){return creator};
 
 		creator.is_creator = true;
-		if(typeof test === "function") creator.test = test.bind(creator);
-		if(typeof rand === "function") creator.rand = rand.bind(creator);
-		if(typeof doc === "function") creator.doc = doc.bind(creator);
+
+		if(typeof test === "function") 
+			creator.test = test.bind(creator);
+		else 
+			creator.test = function(){return false};
+
+		if(typeof rand === "function") 
+			creator.rand = rand.bind(creator);
+		else 
+			creator.rand = function(){return null};
+
+		if(typeof doc === "function") 
+			creator.doc = doc.bind(creator);
+		else 
+			creator.doc = Doc.genDoc.bind(null, "UnknowedType");
+
 
 		return Object.freeze(creator);
 	}
@@ -145,7 +158,15 @@ new (function(){
 	}
 	this.newType.doc = '(name, constructor, {New: funcTest, rand: funcRand, doc: funcDoc})';
 
+	function isType(Type){
+		return (typeof (Type) === "function") 
+				&&(typeof (Type.rand) === "function")
+				&&(typeof (Type.test) === "function")
+				&&(typeof (Type.doc) === "function")
+				&& Type.is_creator;
+	}
 
+	this.isType = isType;
 
 	//Craft Boolean
 		this.bool = new CreateCreator(
@@ -188,19 +209,17 @@ new (function(){
 		this.const = new CreateCreator(newConst, def_const.test, def_const.rand, def_const.doc);
 
 		function tConst(Type, ObjsStack){
-			if(typeof (Type) !== "function" || !Type.is_creator){
-				if(Array.isArray(Type)){
-
-					return T.obj(Type, ObjsStack);
-
-				}else if(typeof(Type) == "object" && Type !== null){
-
-					return T.obj(Type, ObjsStack);
-
-				}else return T.const(Type);
-			}else{
+			if(isType(Type))
 				return Type;
-			}
+
+			if(Array.isArray(Type))
+				return T.obj(Type, ObjsStack);
+
+			if(typeof(Type) == "object" && Type !== null)
+				return T.obj(Type, ObjsStack);
+
+			return T.const(Type);
+			
 		}
 
 
@@ -343,7 +362,7 @@ new (function(){
 
 				if((typeof max !== 'number' || !isFinite(max))
 					||(max < 0)){
-					throw argTypeError(arguments, 'Wait arguments: min(pos), max(pos), step(pos>0)');
+					throw argTypeError(arguments, 'Wait arguments: max(pos), min(pos), step(int>0)');
 				}
 
 				return {
@@ -692,38 +711,36 @@ new (function(){
 	this.outDoc = function(tmp){
 		if((typeof tmp === "function") && tmp.is_creator) return tmp;
 
-		if(!('name' in tmp)){
-			throw new Error();
+		if(typeof tmp !== "object" || !('name' in tmp)){
+			
+			throw new Error("Unvalid documetaion type!");
 		}
 		var type = tmp.name;
 
-		if(('params' in tmp) && tmp.params){
+		if(('params' in tmp) && typeof (tmp.params) === "object"){
 			var params = tmp.params;
-			switch(T.names[type]){
-				case 'obj': {
+
+			if('types' in params){
+
+				if(T.names[type] == 'obj'){
 					var new_obj = {};
 
 					for(var key in params.types)
 						new_obj[key] = T.outDoc(params.types[key]);
 					
 					params.types = new_obj;
-					break;
 				}
-				case 'any':
-				case 'arr': {
-					if(Array.isArray(params.types)){
+				else{
+					if(Array.isArray(params.types))
 						params.types = params.types.map(T.outDoc.bind(T));
-					}else params.types = T.outDoc(params.types);
+					else
+						params.types = T.outDoc(params.types);
 				}
 			}
 
-			if(T.swit && T.names[type] == "swit")
-				for(var key in params.types_object)
-					params.types_object[key] = T.outDoc(params.types_object[key]);
-			
-
 			return getSimpleType(T.names[type], params);
 		}
+
 		return getSimpleType(T.names[type], {});
 	}
 

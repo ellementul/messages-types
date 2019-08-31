@@ -5,113 +5,122 @@
 	var Doc = T.doc;
 
 	var def_key = "type";
-	var def_types_object = {obj: T.obj};
-
-	function tConst(Type){
-		if(typeof (Type) === "function" && Type.is_creator)
-			return Type;
-
-		if(Array.isArray(Type) || (typeof(Type) == "object" && Type !== null))
-			return T.obj(Type);
-		else
-			return T.const(Type);
-	}
+	var def_keys_arr = ["None"];
+	var def_types_arr = [T.obj({type: "None"})];
 
 
-	function randSwitch(key, types_object){
+	function randSwitch(key, keys_arr, types_arr){
 
-		var rand_key = T.any(Object.keys(types_object)).rand;
+		var rand_key = T.pos(keys_arr.length).rand;
 
 		return function(){
-			var type_key = rand_key();
 
-			var obj = types_object[type_key].rand();
-			obj[key] = type_key;
-
-			return obj;
+			return types_arr[rand_key()].rand();
 		}
 	}
 
-	function testSwitch(key, types_object){
+	function testSwitch(key, keys_arr, types_arr){
 
 		return function(obj){
 
 			if(typeof obj !== "object" || obj === null ){
 				var err = this.doc();
-				err.params = "Value is not object!";
+				err.error = "Value is not object!";
 				return err;
 			}
 
 			if(!(key in obj)){
 				var err = this.doc();
-				err.params = "Not needed switchkey!";
+				err.error = "Not needed switchkey!";
+				return err;
+			}
+			var index = keys_arr.indexOf(obj[key]);
+			if(index === -1){
+				var err = this.doc();
+				err.error = "Unknowed value in Object[switchkey]!";
 				return err;
 			}
 
-			if(!(obj[key] in types_object)){
-				var err = this.doc();
-				err.params = "Unknowed value in Object[switchkey]!";
-				return err;
-			}
-
-			var res = types_object[obj[key]].test(obj);
-			if(res){
-				var err = this.doc();
-				err.params = {};
-				err.params[obj[key]] = res;
-				return err;
-			}
+			var res = types_arr[index].test(obj);
+			if(res)
+				return res;
 
 			return false;
 		}
 	}
 
-	function docSwitch(key, types_object){
-		var doc_types = {};
+	function docSwitch(key, keys_arr, types_arr){
 
-		for(var i in types_object){
-			doc_types[i] = types_object[i].doc();
-		}
+		var doc_types = types_arr.map(type=>type.doc());
 
 		return T.doc.gen.bind(null, "swit", 
 		{ 
 			switch_key: key, 
-			types_object: doc_types,
+			types: doc_types,
 		});
 	}
 
-	function newSwitch(key, types_object){
-		if(typeof key !== "string"
-			|| typeof types_object !== "object"
-			|| !types_object)
-			throw T.error(arguments, 'Wait arguments: String, Object');
+	var error_text = 'Wait arguments: (String, [Type, Type, ...])';
 
-		var funcObj = {};
+	function newSwitch(key, types_arr){
 
-		for(var key_value in types_object){
-			funcObj[key_value] = tConst(types_object[key_value]);
-		}
+		if(typeof key !== "string")
+			throw T.error(arguments, 'Argument is not String! ' + error_text);
+
+		if(!Array.isArray(types_arr))
+			throw T.error(arguments, 'Argument is not Array! ' + error_text);
+
+		if(!types_arr.length)
+			throw T.error(arguments, 'Array is empty! ' + error_text);
+
+		var keys_arr = [];
+
+		types_arr = types_arr.map(function(Type, i, arr){
+			
+			if(!T.isType(Type))
+				throw T.error('Index Item: ' + i, ' Wait Type in Array', error_text);
+			
+			var docType = Type.doc();
+
+			if(docType.name !== "Object")
+				throw T.error('Index Item: ' + i, 'Wait Type of Structure: {' + key + ': "String", ...}');
+			
+			if(!docType.params.types[key])
+				throw T.error('Index Item: ' + i, 'Wait Type of Structure: {' + key + ': "String", ...}');
+
+			var doc_key = docType.params.types[key];
+
+			if(doc_key.name !== "Constant")
+				throw T.error('Index Item: ' + i, 'Wait Type of Structure: {' + key + ': "String", ...}');
+			
+			if(!doc_key.params.value)
+				throw T.error('Index Item: ' + i, 'Wait Type of Structure: {' + key + ': "String", ...}');
+
+			keys_arr[i] = doc_key.params.value;
+
+			return Type;
+		});
 
 		return{
-			test: testSwitch(key, funcObj),
-			rand: randSwitch(key, funcObj),
-			doc: docSwitch(key, funcObj)
+			test: testSwitch(key, keys_arr, types_arr),
+			rand: randSwitch(key, keys_arr, types_arr),
+			doc: docSwitch(key, keys_arr, types_arr)
 		}
 	}
 
 	T.newType('swit',
 	{
 		name: "Switch",
-		arg: ["switch_key", "types_object"],
+		arg: ["switch_key", "types"],
 		params: {
-				switch_key: {type: 'String', get default_value(){return def_types_object}},
-				types_object: {type: 'Object', default_value: def_key}
+			switch_key: {type: 'String', def_key},
+			types: {type: '[Type, Type, ...]', default_value: def_types_arr}
 		}
 	},
 	{
 		New: newSwitch,
-		test: testSwitch(def_key, def_types_object),
-		rand: randSwitch(def_key, def_types_object),
-		doc: docSwitch(def_key, def_types_object)
+		test: testSwitch(def_key, def_keys_arr, def_types_arr),
+		rand: randSwitch(def_key, def_keys_arr, def_types_arr),
+		doc: docSwitch(def_key, def_keys_arr, def_types_arr)
 	});
 })();
