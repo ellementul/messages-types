@@ -1,6 +1,8 @@
-const ExtendTypes = require("./type_template.js");
+const ExtendTypes = require("./type.js");
 
 function Test(Types){
+
+	console.log("Type template testing ...");
 
 	ExtendTypes(Types);
 
@@ -10,10 +12,12 @@ function Test(Types){
 	var value = "Hello world!";
 	var type = Types[ExtendTypes.typeName].Def(value);
 
-	if(type.test(type.rand()))
+	var repeat = 10;
+
+	while(repeat--) if(type.test(type.rand()))
 		throw new Error();
 
-	console.log("Type " + ExtendTypes.typeName + " test is successful!");
+	
 
 }
 
