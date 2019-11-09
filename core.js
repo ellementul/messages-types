@@ -18,8 +18,8 @@ var Types = {
 
 		var newType = {
 			name: name,
-			def: newCreator(CrType),
-			outJSON: outJSON
+			Def: newCreator(CrType),
+			outJSON: crOutJSON(outJSON)
 		};
 
 		this[name] = newType;
@@ -35,9 +35,23 @@ function newCreator(CrType){
 
 		var type = CrType.apply(CrType, arguments);
 		type[typeID] = typeID;
+
+		type.toJSON = crToJSON(type.preJSON);
 		
 		return type;
 	};
+}
+
+function crToJSON(preJSON){
+	return function(tabs){
+		return JSON.stringify(preJSON(), "", tabs);
+	}
+}
+
+function crOutJSON(outJSON){
+	return function(json){
+		outJSON(JSON.parse(json));
+	}
 }
 
 function isType(type) {

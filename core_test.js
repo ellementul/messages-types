@@ -1,15 +1,7 @@
-const Core = require("./core.js");
+const Types = require("./core.js");
 
-function CrType(){
-	return {
-		rand: function(){},
-		test: function(){},
-		toJSON: function(){}
-	};
-}
-var Type = Core.newType("Name", CrType, function(){});
+const ExtendTest = require("./test_template.js");
 
-if(!Core.isType(Type.def()))
-	throw new Error();
+ExtendTest(Types);
 
 console.log("Core test is successful!");
