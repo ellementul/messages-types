@@ -27,11 +27,37 @@
 		}
 	});
 
+	var typeThree = T.obj({
+		firstKey: "Add",
+		secondKey: "Rest",
+		reset: {
+			ru: "Ret",
+			rest: "Add",
+			tret: 1234,
+		}
+	});
+
+	var typeFour = T.obj({
+		firstKey: "Del",
+		secondKey: "Rest",
+		reset: {
+			ru: "Ret",
+			rest: "Del",
+			tret: 1234,
+		}
+	});
+
 	var types_arr = [typeOne, typeTwo];
 	TypeSwit = T.swit(switch_key, types_arr);
 
 	console.info("	Тестирование кастомных обьектов: " + revisType(TypeSwit, 100));
 	console.info();
+
+	/*types_arr = [typeThree, typeFour];
+	TypeSwit = T.swit(["firstKey","secondKey"], types_arr);
+
+	console.info("	Тестирование обьектов c несколькими ключами: " + revisType(TypeSwit, 100));
+	console.info();*/
 
 
 	console.info("	Генерация и обратимость документации: " + revisType(T.outDoc(TypeSwit.doc()), 100));

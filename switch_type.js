@@ -64,6 +64,11 @@
 
 	function newSwitch(key, types_arr){
 
+		/*if(Array.isArray(key))
+			if(T.arr(T.str).test())
+				throw T.error(arguments, 'Argument is not Array[String, String...]! ' + error_text);
+			key = key.reduce((acc, item)=> acc + item, "");
+*/
 		if(typeof key !== "string")
 			throw T.error(arguments, 'Argument is not String! ' + error_text);
 
