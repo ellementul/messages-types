@@ -19,6 +19,21 @@ function Test(Types){
 	if(!type.test(0) || !type.test("") || !type.test(null) || !type.test())
 		throw new Error();
 
+	var jType = type.toJSON();
+	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
+
+
+	if(!Types.isType(outJType))
+		throw new Error();
+
+	repeat = 10;
+	while(repeat--) if(outJType.test(type.rand()))
+		throw new Error();
+
+	repeat = 10;
+	while(repeat--) if(type.test(outJType.rand()))
+		throw new Error();
+
 	
 
 }

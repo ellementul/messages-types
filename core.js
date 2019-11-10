@@ -44,13 +44,20 @@ function newCreator(CrType){
 
 function crToJSON(preJSON){
 	return function(tabs){
-		return JSON.stringify(preJSON(), "", tabs);
+		var preJson = Object.assign({}, preJSON());
+		delete preJson.toJSON;
+		return JSON.stringify(preJson, "", tabs);
 	}
 }
 
 function crOutJSON(outJSON){
 	return function(json){
-		outJSON(JSON.parse(json));
+		var type = outJSON(JSON.parse(json));
+		type[typeID] = typeID;
+		
+		type.toJSON = crToJSON(type.preJSON);
+
+		return type;
 	}
 }
 

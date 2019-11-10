@@ -17,8 +17,20 @@ function Test(Types){
 	while(repeat--) if(type.test(type.rand()))
 		throw new Error();
 
-	
+	var jType = type.toJSON();
+	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
 
+
+	if(!Types.isType(outJType))
+		throw new Error();
+
+	repeat = 10;
+	while(repeat--) if(outJType.test(type.rand()))
+		throw new Error();
+
+	repeat = 10;
+	while(repeat--) if(type.test(outJType.rand()))
+		throw new Error();
 }
 
 

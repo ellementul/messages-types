@@ -36,9 +36,9 @@ function ConstructorType(){
 
 function outJSON(preType){
 	if(preType.name == typeName)
-		return ConstructorType(preType.struct)
+		return ConstructorType()
 	else
-		throw new Error("Unknowed type!");
+		throw new Error("This isn't boolean type!");
 }
 
 module.exports = ExtendTypes;
