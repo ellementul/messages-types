@@ -10,18 +10,12 @@ function Test(Types){
 	console.log("	Wrong arguments ...");
 	//===================================
 	testArg(Types[ExtendTypes.typeName]);
-	testArg(Types[ExtendTypes.typeName], 1000);
 	testArg(Types[ExtendTypes.typeName], "Hello world!");
 	testArg(Types[ExtendTypes.typeName], {});
 	testArg(Types[ExtendTypes.typeName], []);
-	testArg(Types[ExtendTypes.typeName], 3, 1);
-	testArg(Types[ExtendTypes.typeName], 3, 1, -5);
-	testArg(Types[ExtendTypes.typeName], 3, 1, 5.5);
-	testArg(Types[ExtendTypes.typeName], 1, 100000, 5);
 
 
-
-	var type = Types[ExtendTypes.typeName].Def(100000, 1, 5);
+	var type = Types[ExtendTypes.typeName].Def(100000);
 
 
 	console.log("	Check isType ...");
@@ -29,9 +23,7 @@ function Test(Types){
 	if(!Types.isType(type))
 		throw new Error();
 
-	type = Types[ExtendTypes.typeName].Def(9, 0, 0);
-
-	type = Types[ExtendTypes.typeName].Def(100000, 1  , type.rand());
+	type = Types[ExtendTypes.typeName].Def(type.rand());
 	
 
 	console.log("	Check slef-test ...");
