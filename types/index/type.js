@@ -25,7 +25,7 @@ function ConstructorType(max){
 	}
 
 	function rand(){
-		return Math.round(max * Math.random());
+		return Math.floor(max * Math.random() - 0.01);
 	}
 
 	function test(n){
