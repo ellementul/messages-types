@@ -37,7 +37,8 @@ function ConstructorType(){
 
 		var str = '';
 		while(size){
-			var charNum = chars[indexType.rand()];
+			var randIndex = indexType.rand()
+			var charNum = chars[randIndex];
 			str += String.fromCharCode(charNum);
 			size--;
 		}
@@ -49,7 +50,7 @@ function ConstructorType(){
 		if(typeof(str) !== 'string'
 		||str.length > 256
 		||!regEx.test(str)){
-			return new Error({ value: value, type: preJSON()});
+			return { value: str, type: preJSON()};
 		}
 	}
 

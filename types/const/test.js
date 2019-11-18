@@ -5,25 +5,26 @@ function Test(Types){
 	console.log("Type "+ ExtendTypes.typeName +" testing ...");
 
 	ExtendTypes(Types);
+
+	var value = 1000;
 	
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName]);
-	testArg(Types[ExtendTypes.typeName], "Hello world!");
-	testArg(Types[ExtendTypes.typeName], {});
-	testArg(Types[ExtendTypes.typeName], []);
+	testArg(Types[ExtendTypes.typeName], value);
 
 
-	var type = Types[ExtendTypes.typeName].Def(100000);
+	value = "Hello world!";
 
+	var type = Types[ExtendTypes.typeName].Def(value);
+
+	
 
 	console.log("	Check isType ...");
 	//===================================
 	if(!Types.isType(type))
 		throw new Error();
 
-	type = Types[ExtendTypes.typeName].Def(type.rand());
 	
 
 	console.log("	Check slef-test ...");
@@ -44,13 +45,6 @@ function Test(Types){
 	repeatSelfTest(outJType.rand, type.test, repeat);
 
 	repeatSelfTest(type.rand, outJType.test, repeat);
-
-	type = Types[ExtendTypes.typeName].Def(1);
-
-	console.log("	Check range ...");
-	//====================================
-	
-	repeatSelfTest(type.rand, type.test, repeat);
 }
 
 function testArg(Type, arg){

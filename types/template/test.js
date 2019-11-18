@@ -6,6 +6,11 @@ function Test(Types){
 
 	ExtendTypes(Types);
 
+	console.log("	Check isCrType ...");
+	//===================================
+	if(!Types.isCrType(Types[ExtendTypes.typeName]))
+		throw new Error();
+
 	var value = 1000;
 	
 
@@ -66,7 +71,7 @@ function repeatSelfTest(rand, test, repeat){
 	while(repeat--){
 		let value = rand();
 		if(test(value))
-			throw test(value);
+			throw new Error(JSON.stringify(test(value), "", 2));
 	}
 }
 

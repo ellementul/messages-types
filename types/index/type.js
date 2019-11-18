@@ -25,16 +25,16 @@ function ConstructorType(max){
 	}
 
 	function rand(){
-		return Math.floor(max * Math.random() - 0.01);
+		return Math.floor(max * Math.abs(Math.random() - 0.01));
 	}
 
 	function test(n){
 		if(typeof n !== 'number' || !isFinite(n))
-			return new Error(JSON.stringify({ value: n, type: preJSON()}, "", 2));
+			return { value: n, type: preJSON()};
 		
 
-		if(n > max || n < 0 || n % 1 !== 0)
-			return new Error(JSON.stringify({ value: n, type: preJSON()}, "", 2));
+		if(n >= max || n < 0 || n % 1 !== 0)
+			return { value: n, type: preJSON()};
 
 		return false;
 	}

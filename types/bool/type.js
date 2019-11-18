@@ -22,7 +22,7 @@ function ConstructorType(){
 
 	function test(value){
 		if(value !== false && value !== true)
-			return new Error({ value: value, type: preJSON()});
+			return { value: value, type: preJSON()};
 	}
 
 	function preJSON(){

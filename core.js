@@ -1,6 +1,7 @@
 'use strict';
 
 var typeID = "UIDOFTYPEOFTYPESJS";
+var crTypeID = "UIDOFCONSTRUCTOROFTYPEOFTYPESJS";
 
 var isTest = true;
 
@@ -21,8 +22,10 @@ var Types = {
 		var newType = {
 			name: name,
 			Def: newCreator(CrType),
-			outJSON: crOutJSON(outJSON)
+			outJSON: crOutJSON(outJSON),
 		};
+
+		newType[crTypeID] = crTypeID;
 
 		this[name] = newType;
 
@@ -30,6 +33,7 @@ var Types = {
 
 	},
 	isType: isType,
+	isCrType: isCrType,
 	get isTest(){return isTest},
 	set isTest(val){isTest = !!val},
 	argError: function argError(wrong_arg, mess){
@@ -97,10 +101,17 @@ function crToJSON(preJSON){
 }
 
 function isType(type) {
-	return type[typeID] == typeID 
+	return typeof type == "object" && type[typeID] == typeID 
 			&& typeof type.rand == "function" 
-			&& typeof type.test == "function" 
+			&& typeof type.test == "function"
+			&& typeof type.preJSON == "function"
 			&& typeof type.toJSON == "function";
+}
+
+function isCrType(crType){
+	return typeof crType == "object" && crType[crTypeID] == crTypeID
+			&& typeof crType.Def == "function" 
+			&& typeof crType.outJSON == "function";
 }
 
 module.exports = Types;

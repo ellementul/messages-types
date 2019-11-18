@@ -10,20 +10,32 @@ function Test(Types){
 	console.log("	Wrong arguments ...");
 	//===================================
 	testArg(Types[ExtendTypes.typeName]);
-	testArg(Types[ExtendTypes.typeName], "Hello world!");
-	testArg(Types[ExtendTypes.typeName], {});
-	testArg(Types[ExtendTypes.typeName], []);
+	testArg(Types[ExtendTypes.typeName], "Hello!");
+	testArg(Types[ExtendTypes.typeName], 256);
+	testArg(Types[ExtendTypes.typeName], null);
+	testArg(Types[ExtendTypes.typeName], false);
 
 
-	var type = Types[ExtendTypes.typeName].Def(100000);
+	var value = {
+		helllo: "World"
+	};
 
+	var type = Types[ExtendTypes.typeName].Def(value);
+
+	value = {
+		str: "Gert",
+		num: 1234/*,
+		obj: type,
+		arr: [1, 2, 3, 4, 5],
+		func: function(){}*/
+	};
+	
 
 	console.log("	Check isType ...");
 	//===================================
 	if(!Types.isType(type))
 		throw new Error();
 
-	type = Types[ExtendTypes.typeName].Def(type.rand());
 	
 
 	console.log("	Check slef-test ...");
@@ -44,13 +56,6 @@ function Test(Types){
 	repeatSelfTest(outJType.rand, type.test, repeat);
 
 	repeatSelfTest(type.rand, outJType.test, repeat);
-
-	type = Types[ExtendTypes.typeName].Def(1);
-
-	console.log("	Check range ...");
-	//====================================
-	
-	repeatSelfTest(type.rand, type.test, repeat);
 }
 
 function testArg(Type, arg){
@@ -72,7 +77,7 @@ function repeatSelfTest(rand, test, repeat){
 	while(repeat--){
 		let value = rand();
 		if(test(value))
-			throw test(value);
+			throw new Error(JSON.stringify(test(value), "", 2));
 	}
 }
 

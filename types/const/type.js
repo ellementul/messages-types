@@ -1,6 +1,6 @@
 'use strict';
 
-const typeName = "Core";
+const typeName = "Const";
 
 var argError = null;
 
@@ -11,10 +11,14 @@ function ExtendTypes(Core){
 
 ExtendTypes.typeName = typeName;
 
-function ConstructorType(hello){
+function ConstructorType(constVal){
 
-	if(typeof hello !== "string")
-		throw argError(arguments, 'Wait string "Hello world!"');
+	if(typeof constVal !== "string"
+		&& typeof constVal !== "number"
+		&& typeof constVal !== "boolean"
+		&& typeof constVal !== "function"
+		&& constVal)
+		throw argError(arguments, 'Wait argument is string || number || boolean || null || undefined || function');
 
 	var type = {
 		rand: rand,
@@ -23,17 +27,17 @@ function ConstructorType(hello){
 	}
 
 	function rand(){
-		return hello;
+		return constVal;
 	}
 
 	function test(value){
-		if(value !== hello)
+		if(value !== constVal)
 			return { value: value, type: preJSON()};
 	}
 
 	function preJSON(){
 		type.name = typeName;
-		type.struct = hello;
+		type.struct = constVal;
 		return type;
 	}
 
