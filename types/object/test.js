@@ -17,19 +17,15 @@ function Test(Types){
 
 
 	var value = {
-		helllo: "World"
+		str: "Gert",
+		num: 1234,
+		arr: [1, 2, 3, 4, 5],
+		func: function(){}
 	};
+
+	value.obj = value;
 
 	var type = Types[ExtendTypes.typeName].Def(value);
-
-	value = {
-		str: "Gert",
-		num: 1234/*,
-		obj: type,
-		arr: [1, 2, 3, 4, 5],
-		func: function(){}*/
-	};
-	
 
 	console.log("	Check isType ...");
 	//===================================
@@ -44,11 +40,21 @@ function Test(Types){
 
 	repeatSelfTest(type.rand, type.test, repeat);
 
-	var jType = type.toJSON();
-	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
+	
 
 	console.log("	Check toJSON ...");
 	//====================================
+	value = {
+		str: "Gert",
+		num: 1234,
+		arr: [1, 2, 3, 4, 5]
+	};
+	value.obj = value;
+
+	type = Types[ExtendTypes.typeName].Def(value);
+	
+	var jType = type.toJSON();
+	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
 
 	if(!Types.isType(outJType))
 		throw new Error();
@@ -76,8 +82,9 @@ function repeatSelfTest(rand, test, repeat){
 
 	while(repeat--){
 		let value = rand();
-		if(test(value))
+		if(test(value)){
 			throw new Error(JSON.stringify(test(value), "", 2));
+		}
 	}
 }
 

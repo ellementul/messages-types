@@ -36,6 +36,7 @@ function ConstructorType(constVal){
 	}
 
 	function preJSON(){
+		var type = {};
 		type.name = typeName;
 		type.struct = constVal;
 		return type;

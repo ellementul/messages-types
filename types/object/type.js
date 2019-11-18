@@ -33,25 +33,16 @@ function ConstructorType(sourceObj){
 	}
 
 	function rand(){
-		var resultObj = {};
-
-		for(var key in typeObj){
-			resultObj[key] = typeObj[key].rand();
-		}
-
-		return resultObj;
+		return genObj(typeObj);
 	}
 
 	function test(testingObj, objsStack){
-		return testObj(typeObj, preJSON, testingObj, objsStack);
+		return testObj(typeObj, testingObj, objsStack);
 	}
 
 	function preJSON(){
-		type.name = typeName;
-		type.struct = {};
-
-
-
+		var type = {name: typeName};
+		type.struct = objPreJson(typeObj);
 		return type;
 	}
 
@@ -60,8 +51,9 @@ function ConstructorType(sourceObj){
 }
 
 function outJSON(preType){
-	if(preType.name == typeName)
-		return ConstructorType(preType.struct)
+
+	if(typeof preType != "object" || preType.name == typeName)
+		return ConstructorType(objOutJson(preType.struct));
 	else
 		throw new Error("This isn't type " + typeName + "!");
 }
@@ -78,11 +70,14 @@ function reCostructObj(sourceObj, objsStack){
 
 	for(var key in sourceObj){
 
-		if(Types.isType(sourceObj[key]))
+		if(Types.isType(sourceObj[key])){
+			funcObj[key] = sourceObj[key];
 			continue;
+		}
 
-		if(!sourceObj || typeof sourceObj[key] !== "object" || !Array.isArray(sourceObj[key]))
+		if(!sourceObj || (typeof sourceObj[key] !== "object" && !Array.isArray(sourceObj[key]))){
 			funcObj[key] = Types.Const.Def(sourceObj[key]);
+		}
 		else if(objsStack.indexOf(sourceObj[key]) !== -1)
 			delete funcObj[key];
 		else
@@ -94,7 +89,7 @@ function reCostructObj(sourceObj, objsStack){
 	return funcObj;
 }
 
-function testObj(typeObj, preJSON, testingObj, objsStack){
+function testObj(typeObj, testingObj, objsStack){
 	if(!objsStack)
 		objsStack = [];
 
@@ -103,24 +98,72 @@ function testObj(typeObj, preJSON, testingObj, objsStack){
 	var result = false;
 
 	for(let key in typeObj){
-		result = result || typeObj[key].test(testingObj[key]);
+
+		if(Types.isType(typeObj[key]))
+			result = typeObj[key].test(testingObj[key]);
+		else
+			result = testObj(typeObj[key], testingObj[key], objsStack)
+
+		if(result)
+			return result;
+		
 	}
 
 	for(let key in testingObj){
+		if(objsStack.indexOf(testingObj[key]) !== -1)
+			continue;
+
 		if(!Types.isType(typeObj[key]))
-			return { value: testingObj[key], type: preJSON};
+			return { messege: "Here cannot value!", key: key, value: testingObj[key], type: {name: typeName, struct: objPreJson(typeObj[key])}};
 	}
+
+	return result;
+
+}
+
+function genObj(typeObj){
+	var resultObj = {};
+
+	for(var key in typeObj){
+		if(Types.isType(typeObj[key]))
+			resultObj[key] = typeObj[key].rand();
+		else 
+			resultObj[key] = genObj(typeObj[key]);
+	}
+
+	return resultObj;
 }
 
 function objPreJson(typeObj){
 	var struct = {};
 
 	for(var key in typeObj){
-		if(Types.isType(sourceObj[key]))
+		if(Types.isType(typeObj[key]))
 			struct[key] = typeObj[key].preJSON();
-		else
+		else{
 			struct[key] = objPreJson(typeObj[key]);
+		}
 	}
 
 	return struct;
+}
+
+function objOutJson(jsonObj){
+	var obj = {};
+
+	for(var key in jsonObj){
+		var propJsonObj = jsonObj[key];
+
+		if(typeof propJsonObj != "object")
+				throw new Error("Invalid scheme JSON, wrong value: " + propJsonObj + " with key: " + key);
+
+		if(propJsonObj.name && Types[propJsonObj.name] && Types.isCrType(Types[propJsonObj.name])){
+			obj[key] = Types[propJsonObj.name].outJSON(propJsonObj);
+		}
+		else{
+			obj[key] = objOutJson(propJsonObj);
+		}
+	}
+
+	return obj;
 }

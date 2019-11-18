@@ -26,6 +26,7 @@ function ConstructorType(){
 	}
 
 	function preJSON(){
+		var type = {};
 		type.name = typeName;
 		return type;
 	}

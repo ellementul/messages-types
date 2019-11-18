@@ -46,6 +46,7 @@ function ConstructorType(max, min, precis){
 	}
 
 	function preJSON(){
+		var type = {};
 		type.name = typeName;
 		type.struct = {
 			min: min,

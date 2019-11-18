@@ -40,6 +40,7 @@ function ConstructorType(max){
 	}
 
 	function preJSON(){
+		var type = {};
 		type.name = typeName;
 		type.struct = {
 			max: max

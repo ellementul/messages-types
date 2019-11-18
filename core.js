@@ -71,9 +71,15 @@ function newCreator(CrType){
 
 function crOutJSON(outJSON){
 	return function(json){
-		var type = outJSON(JSON.parse(json));
-		mixType(type);
 
+		if(typeof json == "string"){
+			var type = outJSON(JSON.parse(json));
+			mixType(type);
+		}
+		else{
+			var type = outJSON(json);
+			mixType(type);
+		}
 		return type;
 	}
 }

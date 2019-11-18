@@ -32,6 +32,7 @@ function ConstructorType(hello){
 	}
 
 	function preJSON(){
+		var type = {};
 		type.name = typeName;
 		type.struct = hello;
 		return type;
@@ -42,7 +43,7 @@ function ConstructorType(hello){
 }
 
 function outJSON(preType){
-	if(preType.name == typeName)
+	if(typeof preType != "object" || preType.name == typeName)
 		return ConstructorType(preType.struct)
 	else
 		throw new Error("This isn't type " + typeName + "!");
