@@ -5,38 +5,42 @@ function Test(Types){
 	console.log("Type "+ ExtendTypes.typeName +" testing ...");
 
 	ExtendTypes(Types);
+
+	console.log("	Check isCrType ...");
+	//===================================
+	if(!Types.isCrType(Types[ExtendTypes.typeName]))
+		throw new Error();
 	
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName]);
 	testArg(Types[ExtendTypes.typeName], 1000);
-	testArg(Types[ExtendTypes.typeName], "Hello world!");
-	testArg(Types[ExtendTypes.typeName], {});
-	testArg(Types[ExtendTypes.typeName], []);
-	testArg(Types[ExtendTypes.typeName], 3, 1);
-	testArg(Types[ExtendTypes.typeName], 3, 1, -5);
-	testArg(Types[ExtendTypes.typeName], 3, 1, 5.5);
-	testArg(Types[ExtendTypes.typeName], 1, 100000, 5);
+	testArg(Types[ExtendTypes.typeName], Types.Index.Def(15));
+	testArg(Types[ExtendTypes.typeName], Types.Index.Def(15), "500");
 
 
+	var value = "Hello world!";
 
-	var type = Types[ExtendTypes.typeName].Def(100000, 1, 5);
+	var typeWithEmpty = Types[ExtendTypes.typeName].Def(Types.Index.Def(15), 2, true);
+	var type = Types[ExtendTypes.typeName].Def(typeWithEmpty, 1024);
 
+	
 
 	console.log("	Check isType ...");
 	//===================================
-	if(!Types.isType(type))
+	if(!Types.isType(type) || !Types.isType(typeWithEmpty))
 		throw new Error();
-
-	type = Types[ExtendTypes.typeName].Def(9, 0, 0);
-
-	type = Types[ExtendTypes.typeName].Def(100000, 1  , type.rand());
 	
+	console.log("	Check wrong value ...");
+	//====================================
+	
+	if(!type.test([]) 
+		|| !type.test([], [13, 14], [16]))
+		throw new Error();
 
 	console.log("	Check slef-test ...");
 	//====================================
-	var repeat = 1024;
+	var repeat = 10;
 
 	repeatSelfTest(type.rand, type.test, repeat);
 
@@ -73,7 +77,7 @@ function repeatSelfTest(rand, test, repeat){
 	while(repeat--){
 		let value = rand();
 		if(test(value))
-			throw test(value);
+			throw new Error(JSON.stringify(test(value), "", 2));
 	}
 }
 

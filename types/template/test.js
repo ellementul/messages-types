@@ -30,11 +30,16 @@ function Test(Types){
 	if(!Types.isType(type))
 		throw new Error();
 
+	console.log("	Check wrong value ...");
+	//====================================
+	
+	if(!type.test([]))
+		throw new Error();
 	
 
 	console.log("	Check slef-test ...");
 	//====================================
-	var repeat = 10;
+	var repeat = 1024;
 
 	repeatSelfTest(type.rand, type.test, repeat);
 

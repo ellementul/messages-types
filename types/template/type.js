@@ -4,7 +4,10 @@ const typeName = "Core";
 
 var argError = null;
 
+var Types = null;
+
 function ExtendTypes(Core){
+	Types = Core;
 	argError = Core.argError;
 	Core.newType(typeName, ConstructorType, outJSON);
 }

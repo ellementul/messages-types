@@ -11,7 +11,7 @@ function Test(Types){
 
 	var type = Types[ExtendTypes.typeName].Def();
 
-	var repeat = 10;
+	var repeat = 1024;
 
 	while(repeat--) if(type.test(type.rand()))
 		throw new Error();
@@ -26,11 +26,11 @@ function Test(Types){
 	if(!Types.isType(outJType))
 		throw new Error();
 
-	repeat = 10;
+	repeat = 1024;
 	while(repeat--) if(outJType.test(type.rand()))
 		throw new Error();
 
-	repeat = 10;
+	repeat = 1024;
 	while(repeat--) if(type.test(outJType.rand()))
 		throw new Error();
 

@@ -29,7 +29,7 @@ function Test(Types){
 
 	console.log("	Check slef-test ...");
 	//====================================
-	var repeat = 10;
+	var repeat = 1024;
 
 	repeatSelfTest(type.rand, type.test, repeat);
 
