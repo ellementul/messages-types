@@ -1,4 +1,5 @@
 const ExtendTypes = require("./type.js");
+const KeyTypes = require("../key/type.js");
 
 function Test(Types){
 
@@ -6,25 +7,44 @@ function Test(Types){
 
 	ExtendTypes(Types);
 
-	var value = 1000;
+	if(!Types.Key)
+		KeyTypes(Types);
+
+	console.log("	Check isCrType ...");
+	//===================================
+	if(!Types.isCrType(Types[ExtendTypes.typeName]))
+		throw new Error();
 	
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName], value);
+	testArg(Types[ExtendTypes.typeName], "String");
+	testArg(Types[ExtendTypes.typeName], 1000);
+	testArg(Types[ExtendTypes.typeName], {});
+	testArg(Types[ExtendTypes.typeName], []);
 
-
-	value = "Hello world!";
-
-	var type = Types[ExtendTypes.typeName].Def(value);
 
 	
+	var type = Types.Key.Def();
+	type = Types[ExtendTypes.typeName].Def(type);
+
 
 	console.log("	Check isType ...");
 	//===================================
-	if(!Types.isType(type) || !Types.isType(Types.Const.Def()))
+	if(!Types.isType(type))
 		throw new Error();
 
+	console.log("	Check wrong value ...");
+	//====================================
+	
+	if(!type.test([]))
+		throw new Error();
+
+	console.log("	Check valid value ...");
+	//====================================
+
+	if(type.test())
+		throw new Error();
 	
 
 	console.log("	Check slef-test ...");
@@ -66,7 +86,7 @@ function repeatSelfTest(rand, test, repeat){
 	while(repeat--){
 		let value = rand();
 		if(test(value))
-			throw test(value);
+			throw new Error(JSON.stringify(test(value), "", 2));
 	}
 }
 

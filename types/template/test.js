@@ -35,6 +35,12 @@ function Test(Types){
 	
 	if(!type.test([]))
 		throw new Error();
+
+	console.log("	Check valid value ...");
+	//====================================
+
+	if(type.test("Hello world!"))
+		throw new Error();
 	
 
 	console.log("	Check slef-test ...");

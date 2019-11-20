@@ -52,7 +52,7 @@ function ConstructorType(sourceObj){
 
 function outJSON(preType){
 
-	if(typeof preType != "object" || preType.name == typeName)
+	if(typeof preType == "object" && preType.name == typeName)
 		return ConstructorType(objOutJson(preType.struct));
 	else
 		throw new Error("This isn't type " + typeName + "!");

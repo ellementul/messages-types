@@ -16,8 +16,10 @@ var Types = {
 		if(typeof outJSON != "function")
 			throw new Error("outJSON isn't Function!")
 
-		if(this[name])
-			throw new Error("Name isn't free!")
+		if(this[name]){
+			console.warn("Type " + name + "already created!");
+			return;
+		}
 
 		var newType = {
 			name: name,

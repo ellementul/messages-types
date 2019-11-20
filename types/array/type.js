@@ -78,7 +78,7 @@ function outJSON(preType){
 
 	var type = Types[nameType].outJSON(struct.type);
 
-	if(typeof preType != "object" || preType.name == typeName)
+	if(typeof preType == "object" && preType.name == typeName)
 		return ConstructorType(type, struct.maxLength, struct.is_empty);
 	else
 		throw new Error("This isn't type " + typeName + "!");

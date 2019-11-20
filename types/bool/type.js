@@ -36,7 +36,7 @@ function ConstructorType(){
 }
 
 function outJSON(preType){
-	if(preType.name == typeName)
+	if(typeof preType == "object" && preType.name == typeName)
 		return ConstructorType()
 	else
 		throw new Error("This isn't boolean type!");

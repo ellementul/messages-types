@@ -63,7 +63,7 @@ function ConstructorType(max, min, precis){
 function outJSON(preType){
 	var arg = preType.struct;
 
-	if(preType.name == typeName)
+	if(typeof preType == "object" && preType.name == typeName)
 		return ConstructorType(arg.max, arg.min, arg.precis);
 	else
 		throw new Error("This isn't type " + typeName + "!");
