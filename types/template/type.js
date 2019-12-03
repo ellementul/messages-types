@@ -2,9 +2,9 @@
 
 const typeName = "Core";
 
-var argError = null;
+let argError = null;
 
-var Types = null;
+let Types = null;
 
 function ExtendTypes(Core){
 	Types = Core;
@@ -17,9 +17,9 @@ ExtendTypes.typeName = typeName;
 function ConstructorType(hello){
 
 	if(typeof hello !== "string")
-		throw argError(arguments, 'Wait string "Hello world!"');
+		throw argError(arguments, 'Wait args (String)');
 
-	var type = {
+	let type = {
 		rand: rand,
 		test: test,
 		preJSON: preJSON
