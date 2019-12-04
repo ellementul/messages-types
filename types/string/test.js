@@ -15,20 +15,30 @@ module.exports = (function Test(Types){
 				[null],
 				[false],
 				[true],
+				["Hello world!"],
+				[5, "Hello world!"],
+				["a-za-D", 15],
+				["Hello world!", 0],
 			],
 			validArgsForConstr: [
-				["Hello world!"]  
+				["a-z", 15],
+				["^Hello world!", 5],
+				["\\w", 12],
+				["1", 1]
 			],
 			wrongValuesOfType: [
 				{},
 				[],
 				5,
-				"Hello",
 				null,
 				false,
 				true,
+				"Hello", //Upper case is wrong!
 			],
-			validValuesOfType: ["Hello world!"],
+			validValuesOfType: [
+				"hell",
+				"helloworld",
+			],
 			repeatSelfTest: 1024,
 		},
 	});

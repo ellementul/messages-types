@@ -129,7 +129,7 @@ function testArrayArgs(testingFunc, arrayArgs, right){
 			errors.push({
 				wrongArgs: args,
 				result: res,
-				error,
+				error: error.message,
 			});
 	});
 
