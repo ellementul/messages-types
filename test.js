@@ -10,9 +10,7 @@ require('./types/object/test.js')(Types);
 require('./types/array/test.js')(Types);
 require('./types/any/test.js')(Types);
 require('./types/string/test.js')(Types);
-/*require('./base_test.js');
-require('./str_test.js');
-require('./switch_test.js');*/
+require('./types/switch/test.js')(Types);
 
 
 console.log("Success!");

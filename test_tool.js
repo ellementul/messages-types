@@ -9,7 +9,7 @@ module.exports = (function Test(Types, {
 	},
 }){
 
-	console.log("Type "+ typeName +" testing: ", "\n");
+	console.log("\n\nType "+ typeName +" testing: ", "\n");
 
 	it("Check isCrType", ()=>
 		Types.isCrType(Types[typeName])

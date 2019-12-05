@@ -1,8 +1,8 @@
 {
   "name": "typesjs",
-  "version": "1.4.7",
+  "version": "2.0.0",
   "description": "",
-  "main": "types.js",
+  "main": "index.js",
   "scripts": {
     "test": "node ./test.js"
   },
@@ -20,7 +20,4 @@
     "url": "https://github.com/ellementul/typesjs/issues"
   },
   "homepage": "https://github.com/ellementul/typesjs#readme",
-  "module_type": "universal",
-  "devDependencies": {
-  }
 }
