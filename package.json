@@ -1,6 +1,6 @@
 {
   "name": "typesjs",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,4 @@
   ],
   "author": "ellementul",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ellementul/typesjs/issues"
-  },
-  "homepage": "https://github.com/ellementul/typesjs#readme",
 }

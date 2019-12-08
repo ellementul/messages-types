@@ -19,8 +19,9 @@ module.exports = (function Test(Types){
 				["Hello world!", [{type: "None"}]],
 			],
 			validArgsForConstr: [
-				  ["type", [{type: "None", prop: Types.Key.Def()}]],
-				  ["type", [{type: "None"}]],
+				[["type", "struct"], [{type: "None", struct: "T", prop: Types.Key.Def()}, {type: "Non", struct: "R", pro: Types.Key.Def()}]],
+				["type", [{type: "None", prop: Types.Key.Def()}]],
+				["type", [{type: "None"}]],
 			],
 			wrongValuesOfType: [
 				{},
@@ -34,10 +35,11 @@ module.exports = (function Test(Types){
 				{type: "None"},
 				{type: "None", prop: "Keys_prop Tetv!"},
 				{type: "None", prop: 5},
+				{type: "None", prop: "Keys"},
 			],
 			validValuesOfType: [
-				{type: "None", prop: "Keys"},
-				{type: "None", prop: "Keys_prop"},
+				{type: "None", struct: "T", prop: "Keys"},
+				{type: "Non", struct: "R", pro: "Keys_prop"},
 			],
 			repeatSelfTest: 1024,
 		},
