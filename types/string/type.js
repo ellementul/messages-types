@@ -21,8 +21,8 @@ function ConstructorType(symbolClass, maxLength){
 
 	let maxLengthType = Types.Index.Def(1024 * 1024);
 
-	if(typeof symbolClass !== "string" || maxLengthType.test(maxLength))
-		throw argError(arguments, 'Wait args ( SymbolClass(String), maxLength(Index>0) )');
+	if(typeof symbolClass !== "string" || maxLengthType.test(maxLength - 1))
+		throw argError(arguments, 'Wait args ( SymbolClass(String), maxLength(1024*1024>=Index>0) )');
 	
 	if(symbolClass[0] == "^")
 		symbolClass = "\\" + symbolClass;
@@ -58,7 +58,7 @@ function ConstructorType(symbolClass, maxLength){
 
 	function test(str){
 		if((typeof(str) !== 'string')
-			|| lengthType.test(str.length)
+			|| lengthType.test(str.length - 1)
 			|| !checkedRegExp.test(str)
 		)
 			return { value: str, type: preJSON()};
