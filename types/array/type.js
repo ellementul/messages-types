@@ -49,6 +49,9 @@ function ConstructorType(itemType, maxLength, is_empty){
 	}
 
 	function test(arr){
+		if(!Array.isArray(arr))
+			return { value: arr, type: preJSON()};
+
 		if((arr.length > maxLength) || (!is_empty && arr.length == 0))
 			return { length: arr.length, type: preJSON()};
 
