@@ -30,6 +30,7 @@ module.exports = (function Test(Types){
 				{},
 				[],
 				5,
+				undefined,
 				null,
 				false,
 				true,
