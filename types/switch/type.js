@@ -115,7 +115,7 @@ function ConstructorType(keyProps, typeObjs){
 				let is_right_values = true;
 				for(let key in typeObjArr[index]){
 					if(typeObjArr[index][key].test(obj[key])){
-						err = { value: obj[key], type: typeObjArr[index][key].preJSON(), switchKeys: keyObj};
+						err = { errKey: key, value: obj[key], type: typeObjArr[index][key].preJSON(), switchKeys: keyObj};
 						is_right_values = false;
 					}
 				}
