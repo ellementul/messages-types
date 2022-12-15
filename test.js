@@ -12,5 +12,7 @@ require('./types/any/test.js')(Types);
 require('./types/string/test.js')(Types);
 require('./types/switch/test.js')(Types);
 
+require('./core.test.js')(Types);
+
 
 console.log("Success!");

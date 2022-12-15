@@ -34,6 +34,15 @@ var Types = {
 		return this[name];
 
 	},
+	outJSON: function (json) {
+		if(typeof json == "string")
+			json = JSON.parse(json)
+
+		if(this.isCrType(Types[json.name]))
+			return Types[json.name].outJSON(json)
+		else
+			throw "The got object isn't json type!"
+	},
 	isType: isType,
 	isCrType: isCrType,
 	get isTest(){return isTest},
@@ -74,15 +83,13 @@ function newCreator(CrType){
 function crOutJSON(outJSON){
 	return function(json){
 
-		if(typeof json == "string"){
-			var type = outJSON(JSON.parse(json));
-			mixType(type);
-		}
-		else{
-			var type = outJSON(json);
-			mixType(type);
-		}
-		return type;
+		if(typeof json == "string")
+			json = JSON.parse(json)
+		
+		var type = outJSON(json);
+		mixType(type);
+
+		return type
 	}
 }
 
