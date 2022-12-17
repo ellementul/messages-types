@@ -40,6 +40,16 @@ function Test(Types){
 
 	repeatSelfTest(type.rand, type.test, repeat);
 
+	console.log("	  Check non-strcit ...");
+	//====================================
+	const non_strcit_type = Types[ExtendTypes.typeName].Def(value, true);
+	const non_strcit_mutations = () => {
+		const obj = non_strcit_type.rand()
+		obj.otherProperty = "otherProperty"
+		return obj
+	}
+	
+	repeatSelfTest(non_strcit_mutations, non_strcit_type.test, repeat);
 	
 
 	console.log("	Check toJSON ...");
