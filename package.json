@@ -1,6 +1,6 @@
 {
-  "name": "typesjs",
-  "version": "2.2.0",
+  "name": "message-types",
+  "version": "2.2.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,11 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ellementul/typesjs.git"
+    "url": "git+https://github.com/ellementul/messages-types.git"
   },
   "keywords": [
     "types",
-    "tests"
+    "tests",
+    "messages"
   ],
   "author": "ellementul",
   "license": "ISC"
