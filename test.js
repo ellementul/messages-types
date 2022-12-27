@@ -11,6 +11,7 @@ require('./types/array/test.js')(Types);
 require('./types/any/test.js')(Types);
 require('./types/string/test.js')(Types);
 require('./types/switch/test.js')(Types);
+require('./types/uuid/test.js')(Types);
 
 require('./core.test.js')(Types);
 

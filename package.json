@@ -1,6 +1,6 @@
 {
   "name": "message-types",
-  "version": "2.2.1",
+  "version": "2.3.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,5 +16,8 @@
     "messages"
   ],
   "author": "ellementul",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
 }
