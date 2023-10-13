@@ -1,4 +1,4 @@
-const ExtendTypes = require("./type.js");
+import ExtendTypes from './type.js'
 
 function Test(Types){
 
@@ -34,10 +34,7 @@ function Test(Types){
 	while(repeat--) if(type.test(outJType.rand()))
 		throw new Error();
 
-	
-
 }
 
 
-
-module.exports = Test;
+export default Test

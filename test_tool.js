@@ -1,4 +1,4 @@
-module.exports = (function Test(Types, {
+export default (function Test(Types, {
 	typeName,
 	tests: {
 		wrongConstrArgsArray,

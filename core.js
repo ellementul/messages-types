@@ -129,4 +129,4 @@ function isCrType(crType){
 			&& typeof crType.outJSON == "function";
 }
 
-module.exports = Types;
+export default Types

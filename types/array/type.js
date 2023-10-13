@@ -2,7 +2,7 @@
 
 const typeName = "Array";
 
-const CrIndexType  =  require('../index/type.js');
+import CrIndexType from '../index/type.js'
 
 var argError = null;
 
@@ -87,4 +87,4 @@ function outJSON(preType){
 		throw new Error("This isn't type " + typeName + "!");
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

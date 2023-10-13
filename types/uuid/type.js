@@ -1,11 +1,11 @@
 'use strict';
-const uuid = require('uuid')
+import * as uuid from 'uuid'
 
 const typeName = "UUID";
 
 var argError = null;
 
-const CrIndexType  =  require('../index/type.js');
+import CrIndexType from '../index/type.js'
 
 var Types = null;
 
@@ -55,4 +55,4 @@ function outJSON(preType){
 		throw new Error("This isn't type " + typeName + "!");
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

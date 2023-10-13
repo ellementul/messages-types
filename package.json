@@ -1,10 +1,11 @@
 {
   "name": "@ellementul/message-types",
-  "version": "2.3.1",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "node ./test.js"
+    "test": "node ./test.mjs"
   },
   "repository": {
     "type": "git",

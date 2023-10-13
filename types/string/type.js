@@ -142,4 +142,4 @@ function parseRange(parse_str){
 	return result;
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

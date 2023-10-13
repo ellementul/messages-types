@@ -1,5 +1,5 @@
-const ExtendTypes = require("./type.js");
-const KeyTypes = require("../key/type.js");
+import ExtendTypes from './type.js'
+import KeyTypes from '../key/type.js'
 
 function Test(Types){
 
@@ -92,4 +92,4 @@ function repeatSelfTest(rand, test, repeat){
 
 
 
-module.exports = Test;
+export default Test;

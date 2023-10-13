@@ -1,4 +1,4 @@
-const ExtendTypes = require("./type.js");
+import ExtendTypes from './type.js'
 
 function Test(Types){
 
@@ -62,4 +62,4 @@ function repeatSelfTest(rand, test, repeat){
 
 
 
-module.exports = Test;
+export default Test

@@ -6,8 +6,8 @@ let argError = null;
 
 let Types = null;
 
-const CrIndexType  =  require('../index/type.js');
-const CrKeyType  =  require('../key/type.js');
+import CrIndexType from '../index/type.js'
+import CrKeyType from '../key/type.js'
 
 function ExtendTypes(Core){
 	Types = Core;
@@ -181,4 +181,4 @@ function outJSON(preType){
 		throw new Error("This isn't type " + typeName + "!");
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

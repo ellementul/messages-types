@@ -69,4 +69,4 @@ function outJSON(preType){
 		throw new Error("This isn't type " + typeName + "!");
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

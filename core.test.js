@@ -1,4 +1,4 @@
-module.exports = (function (Types){
+export default (function (Types){
   crTest("Recognize Index outJSON", () => {
     const type = Types.Index.Def(100)
     const json_type = type.toJSON() 

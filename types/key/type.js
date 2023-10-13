@@ -4,7 +4,7 @@ const typeName = "Key";
 
 var argError = null;
 
-const CrIndexType  =  require('../index/type.js');
+import CrIndexType from '../index/type.js'
 
 var Types = null;
 
@@ -100,4 +100,4 @@ function rangeInArr(beg, end){
 	return arr;
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes

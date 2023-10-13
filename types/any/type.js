@@ -1,7 +1,7 @@
 'use strict';
 
-const CrIndexType  =  require('../index/type.js');
-const CrConstType  =  require('../index/type.js');
+import CrIndexType from '../index/type.js'
+import CrConstType from '../index/type.js'
 
 const typeName = "Any";
 
@@ -73,7 +73,7 @@ function outJSON(preType){
 		throw new Error("This isn't type " + typeName + "!");
 }
 
-module.exports = ExtendTypes;
+export default ExtendTypes
 
 function itemOutJSON(preType){
 	if(!Types.isCrType(Types[preType.name]))
