@@ -37,7 +37,7 @@ function ConstructorType(types){
 	})
 
 	if(!Types.isType(types[0]))
-		throw argError(arguments, 'Wait args Array[Type||Const||undefined, ... Type||Const||undefined]');
+		throw argError(arguments, 'Wait first arg Array[Type||Const||undefined, ... Type||Const||undefined]');
 
 	const typeIndex = Types.Index.Def(types.length)
 

@@ -14,15 +14,17 @@ function Test(Types){
 	//===================================
 	if(!Types.isCrType(Types[ExtendTypes.typeName]))
 		throw new Error();
-	
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName], "String");
-	testArg(Types[ExtendTypes.typeName], 1000);
 	testArg(Types[ExtendTypes.typeName], {});
 	testArg(Types[ExtendTypes.typeName], []);
+	testArg(Types[ExtendTypes.typeName], [[]]);
 
+	console.log("	Valid arguments ...");
+	//===================================
+	// testArg(Types[ExtendTypes.typeName], "String");
+	// testArg(Types[ExtendTypes.typeName], 1000);
 
 	
 	const testType = Types.Key.Def();
@@ -77,7 +79,7 @@ function testArg(Type, arg){
 	var error = null;
 
 	try{
-		var type = Type.Def.apply(null, arg);
+		Type.Def.call(null, arg);
 	}
 	catch(e){
 		var error = e;

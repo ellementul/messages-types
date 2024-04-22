@@ -37,19 +37,6 @@ function Test(Types){
 	repeatSelfTest(type.rand, outJType.test, repeat);
 }
 
-function testArg(Type, arg){
-	var error = null;
-
-	try{
-		var type = Type.Def.apply(null, arg);
-	}
-	catch(e){
-		var error = e;
-	}
-	if(!error)
-		throw new Error();
-}
-
 function repeatSelfTest(rand, test, repeat){
 	repeat = Math.abs(repeat);
 

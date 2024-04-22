@@ -11,7 +11,8 @@ function Test(Types){
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName], value);
+	testArg(Types[ExtendTypes.typeName], []);
+	testArg(Types[ExtendTypes.typeName], {});
 
 
 	value = "Hello world!";
@@ -51,7 +52,7 @@ function testArg(Type, arg){
 	var error = null;
 
 	try{
-		var type = Type.Def.apply(null, arg);
+		var type = Type.Def.call(null, arg);
 	}
 	catch(e){
 		var error = e;

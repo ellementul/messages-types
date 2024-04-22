@@ -62,7 +62,7 @@ function testArg(Type, arg){
 	var error = null;
 
 	try{
-		var type = Type.Def.apply(null, arg);
+		var type = Type.Def.call(null, arg);
 	}
 	catch(e){
 		var error = e;
