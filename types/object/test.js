@@ -32,7 +32,9 @@ function Test(Types){
 	if(!Types.isType(type))
 		throw new Error();
 
-	
+	console.log("	Check isn't Object value ...");
+	//====================================
+	type.test(0)
 
 	console.log("	Check slef-test ...");
 	//====================================

@@ -18,7 +18,7 @@ function ExtendTypes(Core){
 ExtendTypes.typeName = typeName;
 
 function ConstructorType(sourceObj, non_strict_key){
-	const non_strict_keys = non_strict_key //|| true
+	const non_strict_keys = non_strict_key
 
 	if(!sourceObj || typeof sourceObj !== "object")
 		throw argError(arguments, "Argument isn't Object!" );
@@ -91,6 +91,17 @@ function reCostructObj(sourceObj, objsStack){
 }
 
 function testObj(typeObj, testingObj, objsStack, non_strict_keys){
+
+	if(!testingObj || (typeof testingObj !== "object" && !Array.isArray(testingObj)))
+		return { 
+			messege: "This has to be object!",
+			value: testingObj, 
+			type: { 
+				name: typeName, 
+				struct: objPreJson(typeObj)
+			}
+		}
+
 	if(!objsStack)
 		objsStack = [];
 
@@ -101,12 +112,12 @@ function testObj(typeObj, testingObj, objsStack, non_strict_keys){
 	for(let key in typeObj){
 
 		if(Types.isType(typeObj[key]))
-			result = typeObj[key].test(testingObj[key]);
+			result = typeObj[key].test(testingObj[key])
 		else
 			result = testObj(typeObj[key], testingObj[key], objsStack, non_strict_keys)
 
 		if(result)
-			return result;
+			return result
 		
 	}
 
@@ -115,7 +126,15 @@ function testObj(typeObj, testingObj, objsStack, non_strict_keys){
 			continue;
 
 		if(!Types.isType(typeObj[key]) && !non_strict_keys)
-			return { messege: "Here cannot value!", key: key, value: testingObj[key], type: {name: typeName, struct: objPreJson(typeObj[key])}};
+			return { 
+				messege: "Here cannot value!", 
+				key: key, 
+				value: testingObj[key], 
+				type: {
+					name: typeName, 
+					struct: objPreJson(typeObj[key])
+				}
+			}
 	}
 
 	return result;
