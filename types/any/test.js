@@ -25,8 +25,8 @@ function Test(Types){
 
 
 	
-	var type = Types.Key.Def();
-	type = Types[ExtendTypes.typeName].Def(type);
+	const testType = Types.Key.Def();
+	const type = Types[ExtendTypes.typeName].Def([5, testType]);
 
 
 	console.log("	Check isType ...");
@@ -40,10 +40,16 @@ function Test(Types){
 	if(!type.test([]))
 		throw new Error();
 
+	if(!type.test())
+		throw new Error();
+
 	console.log("	Check valid value ...");
 	//====================================
 
-	if(type.test())
+	if(type.test("Key"))
+		throw new Error();
+
+	if(type.test(5))
 		throw new Error();
 	
 

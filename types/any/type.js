@@ -29,15 +29,17 @@ function ConstructorType(types){
 	if(!Array.isArray(types))
 		types = Array.from(arguments);
 
-	if(!Types.isType(types[0]))
-		throw argError(arguments, 'Wait args Array[Type(surelly), Type||null||undefined, ... Type||null||undefined]');
+	types = types.map( type => {
+		if(Types.isType(type))
+			return type
 
-	if(types.length > 1)
-		var typeIndex = Types.Index.Def(types.length)
-	else{
-		var typeIndex = Types.Index.Def(2)
-		types[1] = Types.Const.Def();
-	}
+		return Types.Const.Def(type)
+	})
+
+	if(!Types.isType(types[0]))
+		throw argError(arguments, 'Wait args Array[Type||Const||undefined, ... Type||Const||undefined]');
+
+	const typeIndex = Types.Index.Def(types.length)
 
 	var type = {
 		rand: rand,
