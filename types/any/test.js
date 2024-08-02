@@ -40,10 +40,13 @@ function Test(Types){
 	//====================================
 
 	if(type.test("Key"))
-		throw new Error();
+		throw new Error()
 
 	if(type.test(5))
-		throw new Error();
+		throw new Error()
+
+	if(Types[ExtendTypes.typeName].Def().test())
+		throw new Error()
 	
 
 	console.log("	Check slef-test ...");

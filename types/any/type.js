@@ -39,10 +39,7 @@ function ConstructorType(types){
 		return Types.Const.Def(type)
 	})
 
-	if(!Types.isType(types[0]))
-		throw argError(arguments, 'Wait first arg Array[Type||Object||Const||undefined, ... Type||Object||Const||undefined]');
-
-	const typeIndex = Types.Index.Def(types.length)
+	const typeIndex = types.length && Types.Index.Def(types.length)
 
 	var type = {
 		rand: rand,
@@ -51,10 +48,16 @@ function ConstructorType(types){
 	}
 
 	function rand(){
+		if(!types.length)
+			return null
+
 		return types[typeIndex.rand()].rand();
 	}
 
 	function test(value){
+		if(!types.length)
+			return false
+
 		var result = types.every(typeItem => typeItem.test(value));
 		if(result)
 			return { value: value, type: preJSON()};
