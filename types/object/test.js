@@ -74,6 +74,28 @@ function Test(Types){
 	repeatSelfTest(outJType.rand, type.test, repeat);
 
 	repeatSelfTest(type.rand, outJType.test, repeat);
+
+	console.log("  Check binary data handling ...");
+	const binaryObj = {
+		buffer1: new Uint8Array([1, 2, 3]),
+		buffer2: new ArrayBuffer(10),
+		buffer3: new DataView(new ArrayBuffer(5)),
+		regular: "still works"
+	};
+
+	const binaryType = Types[ExtendTypes.typeName].Def(binaryObj);
+
+	if (!Types.isType(binaryType)) throw new Error("binaryType is not valid");
+
+	const generated = binaryType.rand();
+
+	if (binaryType.test(generated)) throw new Error("Validation failed for generated binary object");
+
+	const json = binaryType.toJSON();
+	const restoredType = Types[ExtendTypes.typeName].outJSON(json);
+	if (!Types.isType(restoredType)) throw new Error("Restored type is not valid");
+	const restoredVal = restoredType.rand();
+	if (restoredType.test(restoredVal)) throw new Error("Restored type validation failed");
 }
 
 function testArg(Type, arg){

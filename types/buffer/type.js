@@ -1,14 +1,13 @@
-'use strict';
-
 const typeName = "Buffer";
 let argError = null;
 let Types = null;
 
 function ExtendTypes(Core) {
-  Types = Core;
-  argError = Core.argError;
-  Core.newType(typeName, ConstructorType, outJSON);
+    Types = Core;
+    argError = Core.argError;
+    Core.newType(typeName, ConstructorType, outJSON);
 }
+
 ExtendTypes.typeName = typeName;
 
 

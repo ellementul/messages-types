@@ -1,4 +1,5 @@
-  
+import CrConstType from '../index/type.js'
+import CrConstBuffer from '../buffer/type.js'
 
 const typeName = "Object";
 
@@ -9,8 +10,12 @@ var Types = null;
 function ExtendTypes(Core){
 	Types = Core;
 	argError = Core.argError;
+
 	if(!Core.Const)
-		CrIndexType(Const);
+		CrConstType(Core)
+
+	if(!Core.Buffer)
+		CrConstBuffer(Core)
 
 	Core.newType(typeName, ConstructorType, outJSON);
 }
@@ -73,6 +78,11 @@ function reCostructObj(sourceObj, objsStack){
 
 		if(Types.isType(sourceObj[key])){
 			funcObj[key] = sourceObj[key];
+			continue;
+		}
+
+		if (sourceObj[key] instanceof ArrayBuffer || ArrayBuffer.isView(sourceObj[key])) {
+			funcObj[key] = Types.Buffer.Def(sourceObj[key].byteLength, false)
 			continue;
 		}
 

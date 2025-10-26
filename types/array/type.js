@@ -1,8 +1,6 @@
-'use strict';
-
-const typeName = "Array";
-
 import CrIndexType from '../index/type.js'
+
+const typeName = "Array"
 
 var argError = null;
 
