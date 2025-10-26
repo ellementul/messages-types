@@ -34,13 +34,13 @@ function ConstructorType(max, min, precis){
 
 	function test(n){
 		if(typeof n !== 'number' || !isFinite(n))
-			return new Error(JSON.stringify({ value: n, type: preJSON()}, "", 2));
+			return { value: n, type: preJSON() }
 		
 
 		if((n > max)
 		||(n < min)
 		|| (n.toFixed(precis) != n && n !== 0) )
-			return new Error(JSON.stringify({ value: n, type: preJSON()}, "", 2));
+			return { value: n, type: preJSON() }
 
 		return false;
 	}
