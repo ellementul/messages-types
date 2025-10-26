@@ -93,7 +93,27 @@ Discriminated union (tagged union). Constructor:
 
 Example:
 ```js
-const MsgType = Types.Switch.Def("kind", [
-  { kind: "text", content: Types.String.Def("\\w", 100) },
-  { kind: "binary", payload: Types.Buffer.Def(1024) }
-]);
+import Types from '@ellementul/message-types';
+
+// Define a message structure
+const MessageType = Types.Object.Def({
+  id: Types.Key.Def(),
+  timestamp: Types.Number.Def(1700000000, 1600000000, 0),
+  payload: Types.Any.Def([
+    Types.String.Def("\\w", 256),
+    Types.Buffer.Def(2048, true) // non-empty binary data
+  ])
+});
+
+// Generate a valid message
+const msg = MessageType.rand();
+console.log(msg); 
+
+// Validate
+console.log(MessageType.validate(msg)) // true
+
+// Serialize type
+const json = MessageType.toJSON();
+const RestoredType = Types.outJSON(json);
+console.log(RestoredType.validate(msg)); // true
+```
