@@ -13,6 +13,7 @@ The core function accepts three arguments:
 
 Each type consists of three methods:
 - **`.rand()`** — generates a random valid value
+- **`.validate(value)`** — validates a value return true if it is valid
 - **`.test(value)`** — validates a value against the type (returns error object or `undefined`)
 - **`.toJSON()`** — serializes the type to JSON-compatible format
 
