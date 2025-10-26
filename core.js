@@ -95,8 +95,13 @@ function crOutJSON(outJSON){
 
 function mixType(type){
 	type[typeID] = typeID;
-	type.toJSON = crToJSON(type.preJSON);
-	type.test = wrapTest(type.test);
+	type.toJSON = crToJSON(type.preJSON)
+	type.test = wrapTest(type.test)
+
+	if(typeof type.validate !== "function")
+		type.validate = function(val) {
+			return !type.test(val)
+		}
 }
 
 function wrapTest(test){

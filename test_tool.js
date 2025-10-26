@@ -57,6 +57,9 @@ export default (function Test(Types, {
 
 	selfTest =  () => outJType.test(outJType.rand());
 	crRepeatTest('Self-test type of JSON', selfTest, repeatSelfTest, true);
+
+	crTestValues('Validate values with .validate (should be true)', type.validate, validValuesOfType, false);
+	crTestValues('Validate values with .validate (should be false)', type.validate, wrongValuesOfType, true);
 });
 
 
