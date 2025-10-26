@@ -1,73 +1,98 @@
-# Typesjs
-Библеотека для тестирования и генерации занчений по заданой типом структуре
+# Types.js
 
-## Функциональность ядра
-### Создание типа
-Эта функция принимает три аргумента:
-Первое это имя типа.
-Второе это конструктор типа.
-Третий конструктор типа из JSON.
+A library for testing and generating values based on type-defined structures.
 
-Сам тип состоит из трех функций:
-Генератор значений
-Валидатор
-Преобразователь типа в JSON
-Отключение тестов
-Это свойство представленное изнутри геттером и сеттером, которое если равно False, отключит все тесты, они будут возвращать по умолчанию так же значение False без каких либо реальных проверок.
+## Core Functionality
 
-## Модули
-### Bool
-Обычный булев тип
+### Creating a Type
 
-### Number
-Обычное дробное число, реальный максимум зависит от движка, но нужен не для этого.
-Нужен для того чтобы дать конкретные ограничение размеру числа, потому что реальные объекты обычно не имеют каких сверх больших значений, и у любого объекта есть свои пределы. Если эти пределы неизвестны, то это говорит о плохо спроектированных алгоритмах, потому в реальности ограничение у чисел все равно будет, просто будет зависеть от платформы, а не от программиста.
-Принимает три параметра: Максимум, Минимум и Количество знаков после десятичной запятой.
-Index
-Этот тип служит для индексации. Диапазон от нуля до максимума принимаемого как аргумент при определении типа в целых числах. Причем максимальное число никогда не будет достигнуто.
+The core function accepts three arguments:
+1. **Type name** (string)
+2. **Type constructor** (function)
+3. **JSON deserializer** (function)
 
-### Alpha
-Просто диапазон дробных значений от 0 до 1, точность значения в данном случае будет возложена на платформу, так как обычно это какой диапазон чисел отображенный на отрезок от 0 до 1, в этом случае этот тип лучше не использовать, а использовать изначальный диапазон, например для цвета это от 0 до 255. Но если важно именно такое абстрактное значение, то ограничение на количество десятичных цифр будет только мешать.
+Each type consists of three methods:
+- **`.rand()`** — generates a random valid value
+- **`.test(value)`** — validates a value against the type (returns error object or `undefined`)
+- **`.toJSON()`** — serializes the type to JSON-compatible format
 
-### Key
-Строка максимальной длиной 256 состоящая из символов a-zA-Z0-9_, дающий максимально совместимый строковой тип, предназначенный для идентификации структуры.
-Аргументов у конструктора никаких нет.
+#### Disabling Tests
 
-### UUID
-Тип для uuid
-Это обертка над библеотекой https://www.npmjs.com/package/uuid
-Для генерации используется uuid v4
+The library provides a global flag `Types.isTest`.  
+If set to `false`, all `.test()` calls return `false` immediately without validation — useful for production builds.
 
-### Const
-Этот тип работает со строками, числами, Boolean, “null”, “undefined”, просто оборачивая их в тип который по сути является константным значением которое всегда может быть сравнено напрямую.
+---
 
-### Object
-Это мета-тип обрабатывающий объекты, конструктор принимает лишь одно значение, это объект по которому будет создан шаблон Объекта.
-Вторым необязательным аргументом указываеться должен ли тестр типа игнорировать "лишнии" свойтсва в проверямом объекте
-Все вложенные объекты в том числе массивы будут обработаны рекурсивно этим же конструктором. 
-Если требуется иное поведение, то массив для начала стоит привести к типу. 
-Хотя включение функций вообще не рекомендуется в структуру, тем не менее функция в объекте будет обработана конструктором типа Const
-Типы содержащиеся в этом объекте будут включены в шаблон без обработки.
-Все значения не имеющие внутренней структуры объекта(строки, числа и т. д.), будут обработаны конструктором типа Const
-Если внутри объекта будет найдена ссылка на сам этот объект, или другие циклические зависимости, все они будут проигнорированы, как во время генерирования объектов, так и во время проверки объектов на соответствие типу. Старайтесь избегать циклических зависимостей в структуре.
+## Built-in Types
 
-### Any
-Объединение типов, при этом значение должно отвечать структуре одно из перечисленных типов. На вход конструктор типа принимает первым аргументом массив типов и констант.
-Констаные значения будут переданы в конструктор констатного типа автоматически
-Вложенные массивы и обьекты будут преобразовываться в тип обьекта
+### `Bool`
+Standard boolean type (`true` / `false`).
 
+### `Number`
+Floating-point number with constraints:
+- `min`: minimum allowed value
+- `max`: maximum allowed value
+- `precision`: number of decimal digits (0–9)
 
-### Array
-Тип массива, подразумевает что все элементы в массиве одного типа, конструктор типа принимает на вход тип, длину массива, и может ли массив быть пустым. 
-Сам массив может быть меньшей длины чем максимальная длина.
-Первый аргумент не может быть ничем кроме типа.
+> **Note**: Use this to enforce realistic numeric bounds in your data structures.
 
-### String
-Тип строки, его конструктор принимает символьный класс и максимальный размер строки в качестве аргументов.
-Символьный класс это строка являющаяся способом перечислить допустимые символы, по факту будет обернута в в регулярное выражение /^[simbol_class]&/, при этом вы не можете использовать отрицание в начале символьного класса как это делается с регулярными выражениями.
+### `Index`
+Integer in range `[0, max)`.  
+Useful for array indices or enumeration.
 
-### Switch
-Этот тип предназначен для создания структуры которая зависит от ключевого свойства, которое и решает какого типа структура будет.
-Конструктор типа принимает два аргумента.
-Первый аргумент это либо одно значения типа Key, либо массив таких значений. Это набор ключевых свойств объекте отвечающих за тип структуры объекта.
-Второй аргумент это  массив объектов, каждый из станет типом структуры. Поэтому каждый объект должен обязательно содержать ключевое свойство(свойства) со значением типа Key, остальные свойства должны быть типами.
+### `Alpha`
+Float in range `[0, 1]`.  
+No precision control — relies on platform float representation.
+
+### `Key`
+String (max 256 chars) matching `/^[a-zA-Z0-9_]+$/`.  
+Ideal for identifiers, keys, or safe property names.
+
+### `UUID`
+Generates and validates UUID v4 strings using the [`uuid`](https://www.npmjs.com/package/uuid) package.
+
+### `Const`
+Wraps a primitive value (`string`, `number`, `boolean`, `null`, `undefined`, `function`) as an immutable constant.  
+Validation is strict equality (`===`).
+
+### `Object`
+Meta-type for plain objects.  
+Constructor accepts:
+- `templateObject`: object used to infer the structure
+- `nonStrict` (optional): if `true`, ignores extra properties during validation
+
+**Behavior**:
+- Nested objects/arrays are processed recursively.
+- Primitives → wrapped in `Const`.
+- Functions → treated as `Const`.
+- Existing types inside the object → preserved as-is.
+- Cyclic references → ignored (not included in generated or validated objects).
+
+### `Array`
+Homogeneous array type. Constructor:
+- `itemType`: type of each element (must be a valid `Types` type)
+- `maxLength`: maximum number of elements
+- `allowEmpty`: if `false`, array must contain at least one element
+
+### `String`
+Constrained string type. Constructor:
+- `symbolClass`: character class (e.g., `"a-zA-Z0-9"`, `"\\w"`)
+- `maxLength`: maximum string length
+
+> The symbol class is compiled into a regex: `/^[symbolClass]+$/`
+
+### `Any`
+Union type. Accepts an array of types/constants.  
+Value must match **at least one** of them.
+
+### `Switch`
+Discriminated union (tagged union). Constructor:
+- `keyProps`: string or array of property names that act as discriminators
+- `typeObjects`: array of object templates, each **must include** the discriminator(s)
+
+Example:
+```js
+const MsgType = Types.Switch.Def("kind", [
+  { kind: "text", content: Types.String.Def("\\w", 100) },
+  { kind: "binary", payload: Types.Buffer.Def(1024) }
+]);
