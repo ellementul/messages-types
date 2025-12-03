@@ -14,13 +14,15 @@ function Test(Types){
 	testArg(Types[ExtendTypes.typeName], 256);
 	testArg(Types[ExtendTypes.typeName], null);
 	testArg(Types[ExtendTypes.typeName], false);
+	testArg(Types[ExtendTypes.typeName], {
+		func: function(){}
+	});
 
 
 	var value = {
 		str: "Gert",
 		num: 1234,
-		arr: [1, 2, 3, 4, 5],
-		func: function(){}
+		arr: [1, 2, 3, 4, 5]
 	};
 
 	value.obj = value;

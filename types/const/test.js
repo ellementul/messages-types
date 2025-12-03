@@ -11,8 +11,8 @@ function Test(Types){
 
 	console.log("	Wrong arguments ...");
 	//===================================
-	testArg(Types[ExtendTypes.typeName], []);
-	testArg(Types[ExtendTypes.typeName], {});
+	testArg(Types[ExtendTypes.typeName], Types[ExtendTypes.typeName].Def(value));
+	testArg(Types[ExtendTypes.typeName], () => {});
 
 
 	value = "Hello world!";

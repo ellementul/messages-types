@@ -1,5 +1,7 @@
 'use strict';
 
+import Types from "../../core.js";
+
 const typeName = "Const";
 
 var argError = null;
@@ -13,12 +15,8 @@ ExtendTypes.typeName = typeName;
 
 function ConstructorType(constVal){
 
-	if(typeof constVal !== "string"
-		&& typeof constVal !== "number"
-		&& typeof constVal !== "boolean"
-		&& typeof constVal !== "function"
-		&& constVal)
-		throw argError(arguments, 'Wait argument is string || number || boolean || null || undefined || function');
+	if(Types.isCrType(constVal) || Types.isType(constVal) || typeof constVal == "function")
+		throw argError(arguments, 'Const value cannot be Type or Function!');
 
 	var type = {
 		rand: rand,
