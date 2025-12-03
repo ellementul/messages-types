@@ -3,6 +3,17 @@
 var typeID = "UIDOFTYPEOFTYPESJS";
 var crTypeID = "UIDOFCONSTRUCTOROFTYPEOFTYPESJS";
 
+export class NonConstantTypeError extends Error {
+  constructor(message, type) {
+    super(message || "Type is not constant");
+    this.typeStack = [type];
+  }
+  
+  pushType(type) {
+    this.typeStack.push(type)
+  }
+}
+
 var Types = {
 	newType: function (name, CrType, outJSON){
 		if(typeof name != "string")
@@ -101,9 +112,12 @@ function mixType(type){
 		}
 
 	if(typeof type.constValue !== "function")
-		type.constValue = function () { throw new Error("Type is not constant") }
+		type.constValue = function () {
+			const typeName = type.preJSON().name
+			throw new NonConstantTypeError(`${typeName} Type is not constant`, typeName)
+		}
 
-	// Добавляем общий метод setValue для всех типов
+
     if(typeof type.setValue !== "function") {
         type.setValue = function setValue(value) {
             if (type.test(value)) return null

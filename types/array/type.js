@@ -1,3 +1,4 @@
+import { NonConstantTypeError } from '../../core.js';
 import CrIndexType from '../index/type.js'
 
 const typeName = "Array"
@@ -30,6 +31,7 @@ function ConstructorType(itemType, maxLength, is_empty){
 	var type = {
 		rand: rand,
 		test: test,
+		constValue: constValue,
 		preJSON: preJSON
 	}
 
@@ -57,6 +59,17 @@ function ConstructorType(itemType, maxLength, is_empty){
 
 		if(err_arr.length)
 			return { wrong_values: err_arr, type: preJSON()};
+	}
+
+	function constValue() {
+		try {
+			return [itemType.constValue()]
+		} catch (e) {
+			if (e instanceof NonConstantTypeError)
+				e.pushType(typeName)
+
+			throw e
+		}
 	}
 
 	function preJSON(){
