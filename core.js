@@ -3,8 +3,6 @@
 var typeID = "UIDOFTYPEOFTYPESJS";
 var crTypeID = "UIDOFCONSTRUCTOROFTYPEOFTYPESJS";
 
-var isTest = true;
-
 var Types = {
 	newType: function (name, CrType, outJSON){
 		if(typeof name != "string")
@@ -24,7 +22,7 @@ var Types = {
 		var newType = {
 			name: name,
 			Def: newCreator(CrType),
-			outJSON: crOutJSON(outJSON),
+			outJSON: crOutJSON(outJSON)
 		};
 
 		newType[crTypeID] = crTypeID;
@@ -45,8 +43,6 @@ var Types = {
 	},
 	isType: isType,
 	isCrType: isCrType,
-	get isTest(){return isTest},
-	set isTest(val){isTest = !!val},
 	argError: function argError(wrong_arg, mess){
 		if(mess === undefined) mess = '';
 		var ER = new TypeError('Argument type is wrong! Arguments(' + forArg(wrong_arg) + ');' + mess);
@@ -78,8 +74,6 @@ function newCreator(CrType){
 	};
 }
 
-
-
 function crOutJSON(outJSON){
 	return function(json){
 
@@ -94,22 +88,28 @@ function crOutJSON(outJSON){
 }
 
 function mixType(type){
+	if(typeof type !== "object" || typeof type.rand !== "function" || typeof type.test !== "function")
+		throw new Error("This is not type!")
+
 	type[typeID] = typeID;
 	type.toJSON = crToJSON(type.preJSON)
-	type.test = wrapTest(type.test)
+	type.test = type.test
 
 	if(typeof type.validate !== "function")
 		type.validate = function(val) {
 			return !type.test(val)
 		}
-}
 
-function wrapTest(test){
-	return function(val){
-		if(isTest)
-			return test(val);
-		return false;
-	}
+	if(typeof type.constValue !== "function")
+		type.constValue = function () { throw new Error("Type is not constant") }
+
+	// Добавляем общий метод setValue для всех типов
+    if(typeof type.setValue !== "function") {
+        type.setValue = function setValue(value) {
+            if (type.test(value)) return null
+            return Types.Const.Def(value)
+        }
+    }
 }
 
 function crToJSON(preJSON){

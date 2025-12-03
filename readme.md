@@ -17,11 +17,6 @@ Each type consists of three methods:
 - **`.test(value)`** — validates a value against the type (returns error object or `undefined`)
 - **`.toJSON()`** — serializes the type to JSON-compatible format
 
-#### Disabling Tests
-
-The library provides a global flag `Types.isTest`.  
-If set to `false`, all `.test()` calls return `false` immediately without validation — useful for production builds.
-
 ---
 
 ## Built-in Types

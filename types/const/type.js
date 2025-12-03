@@ -23,6 +23,7 @@ function ConstructorType(constVal){
 	var type = {
 		rand: rand,
 		test: test,
+		constValue: constValue,
 		preJSON: preJSON
 	}
 
@@ -33,6 +34,10 @@ function ConstructorType(constVal){
 	function test(value){
 		if(value !== constVal)
 			return { value: value, type: preJSON()};
+	}
+
+	function constValue() {
+		return constVal;
 	}
 
 	function preJSON(){

@@ -26,7 +26,6 @@ function Test(Types){
 	if(!Types.isType(type) || !Types.isType(Types.Const.Def()))
 		throw new Error();
 
-	
 
 	console.log("	Check slef-test ...");
 	//====================================
@@ -34,11 +33,17 @@ function Test(Types){
 
 	repeatSelfTest(type.rand, type.test, repeat);
 
-	var jType = type.toJSON();
-	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
+
+	console.log("  Check constValue method ...");
+	//====================================
+	if(type.constValue() !== value)
+		throw new Error("constValue() doesn't return the correct constant value");
 
 	console.log("	Check toJSON ...");
 	//====================================
+
+	var jType = type.toJSON();
+	var outJType = Types[ExtendTypes.typeName].outJSON(jType);
 
 	if(!Types.isType(outJType))
 		throw new Error();
