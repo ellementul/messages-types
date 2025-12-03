@@ -1,3 +1,4 @@
+import { NonConstantTypeError } from '../../core.js'
 import ExtendTypes from './type.js'
 
 function Test(Types){
@@ -76,6 +77,132 @@ function Test(Types){
 	repeatSelfTest(outJType.rand, type.test, repeat);
 
 	repeatSelfTest(type.rand, outJType.test, repeat);
+
+	console.log("  Check constValue method with circular references ...");
+	//====================================
+	// Тест с константными свойствами
+	var constSubType = Types.Const.Def(42);
+	var objTypeWithConst = Types.Object.Def({ value: constSubType });
+	try {
+		var result = objTypeWithConst.constValue();
+		if (result.value !== 42) {
+			throw new Error("constValue() should return { value: 42 } for object with constant property");
+		}
+	} catch (e) {
+		throw new Error("constValue() shouldn't throw error for object with constant property: " + e.message);
+	}
+
+	// Тест с не-константным свойством (используем примитивный тип Number)
+	var nonConstSubType = Types.Number.Def(100, 0, 0);
+	var objTypeWithNonConst = Types.Object.Def({ value: nonConstSubType });
+	try {
+		objTypeWithNonConst.constValue();
+		throw new Error("constValue() should throw error for object with non-constant property");
+	} catch (e) {
+		if (!(e instanceof NonConstantTypeError)) {
+			throw new Error("Expected NonConstantTypeError, got different error: " + e.message);
+		}
+		if (!e.typeStack || !e.typeStack.includes("Object")) {
+			throw new Error("Error should contain type stack with 'Object' type");
+		}
+	}
+
+	// Тест с циклической зависимостью
+	// Создаем два объекта, ссылающихся друг на друга
+	var objA = { prop: null };
+	var objB = { prop: objA };
+	objA.prop = objB;
+
+	try {
+		var cyclicObjType = Types.Object.Def(objA);
+		cyclicObjType.constValue();
+	} catch (e) {
+		if (!(e instanceof NonConstantTypeError)) {
+			throw new Error("Expected NonConstantTypeError for circular reference, got: " + e.message);
+		}
+		if (e.message !== "Circular reference detected") {
+			throw new Error("Expected 'Circular reference detected' message, got: " + e.message);
+		}
+	}
+
+	// Тест с вложенными объектами
+	var nestedConstType = Types.Const.Def(100);
+	var nestedObjType = Types.Object.Def({
+		level1: Types.Object.Def({
+			level2: Types.Object.Def({
+				value: nestedConstType
+			})
+		})
+	});
+	try {
+		var nestedResult = nestedObjType.constValue();
+		if (nestedResult.level1.level2.value !== 100) {
+			throw new Error("constValue() should correctly handle deeply nested constant objects");
+		}
+	} catch (e) {
+		throw new Error("constValue() shouldn't throw error for deeply nested constant objects: " + e.message);
+	}
+
+	console.log("  Check constValue method with INDIRECT circular references ...");
+	//====================================
+	// Тест с косвенной циклической зависимостью между разными объектами
+	// Создаем три объекта, образующих цикл: A -> B -> C -> A
+	var objA = { name: "A", next: null };
+	var objB = { name: "B", next: null };
+	var objC = { name: "C", next: null };
+
+	objA.next = objB;  // A ссылается на B
+	objB.next = objC;  // B ссылается на C
+	objC.next = objA;  // C ссылается на A (замыкаем цикл)
+
+	// Создаем тип на основе objA
+	var cyclicType = Types.Object.Def(objA);
+
+	try {
+		console.log("Trying to get constValue() for object with indirect circular reference...");
+		var result = cyclicType.constValue()
+	} catch (e) {
+		if (e.message.includes("Maximum call stack size exceeded") || 
+			e.message.includes("stack overflow")) {
+			console.error("CRITICAL ERROR: Stack overflow detected!");
+			console.error("This proves that the implementation doesn't handle indirect circular references");
+			console.error("The function entered infinite recursion and crashed");
+			throw new Error("Function failed to handle indirect circular dependencies");
+		} else if (e instanceof NonConstantTypeError && e.message === "Circular reference detected") {
+			console.log("Test passed - circular reference was properly detected and handled");
+		} else {
+			throw new Error("Unexpected error type: " + e.message);
+		}
+	}
+
+	// Тест с вложенными циклами разной глубины
+	var deepObj1 = { level: 1, next: null };
+	var deepObj2 = { level: 2, next: null };
+	var deepObj3 = { level: 3, next: null };
+	var deepObj4 = { level: 4, next: null };
+
+	deepObj1.next = deepObj2;
+	deepObj2.next = deepObj3;
+	deepObj3.next = deepObj4;
+	deepObj4.next = deepObj2; // Цикл начинается с уровня 2
+
+	var deepCyclicType = Types.Object.Def(deepObj1);
+
+	try {
+		console.log("Trying to get constValue() for deeply nested indirect circular reference...");
+		deepCyclicType.constValue();
+	} catch (e) {
+		if (e.message.includes("Maximum call stack size exceeded")) {
+			console.error("CRITICAL ERROR: Stack overflow in deep nesting!");
+			throw new Error("Deeply nested circular references are not handled");
+		} else if (e instanceof NonConstantTypeError) {
+			console.log("Deep nesting test passed - circular reference was detected at correct depth");
+			// Проверяем, что стек содержит правильные имена типов
+			if (!e.typeStack || e.typeStack.length < 3) {
+				throw new Error("Error stack doesn't contain enough type information for deep nesting");
+			}
+		}
+	}
 
 	console.log("  Check binary data handling ...");
 	const binaryObj = {

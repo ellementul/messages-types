@@ -1,3 +1,4 @@
+import { NonConstantTypeError } from '../../core.js'
 import CrConstType from '../index/type.js'
 import CrConstBuffer from '../buffer/type.js'
 
@@ -35,6 +36,7 @@ function ConstructorType(sourceObj, non_strict_key){
 		name: typeName,
 		rand: rand,
 		test: test,
+		constValue: constValue,
 		preJSON: preJSON
 	}
 
@@ -45,6 +47,11 @@ function ConstructorType(sourceObj, non_strict_key){
 	function test(testingObj, objsStack){
 		return testObj(typeObj, testingObj, objsStack, non_strict_keys);
 	}
+	
+	function constValue(){
+		return constValueObj(typeObj);
+	}
+
 
 	function preJSON(){
 		var type = {name: typeName};
@@ -162,6 +169,28 @@ function genObj(typeObj){
 	}
 
 	return resultObj;
+}
+
+function constValueObj(typeObj) {
+	const result = {}
+
+	for (const key in typeObj) {
+		try {
+			if(Types.isType(typeObj[key]))
+				result[key] = typeObj[key].constValue()
+			else
+				result[key] = constValueObj(typeObj[key])
+		} catch(err) {
+			if (err instanceof NonConstantTypeError) {
+				err.pushType(typeName)
+				err.pushType(`key: ${key}`)
+			}
+
+			throw err
+		}
+	}
+
+	return result
 }
 
 function objPreJson(typeObj){
