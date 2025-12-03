@@ -1,4 +1,4 @@
-import { NonConstantTypeError } from '../../core.js';
+import { NonConstantTypeError } from '../../core.js'
 import ExtendTypes from './type.js'
 
 function Test(Types){

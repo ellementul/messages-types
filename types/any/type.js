@@ -3,6 +3,8 @@
 import CrIndexType from '../index/type.js'
 import CrConstType from '../index/type.js'
 
+import { NonConstantTypeError } from '../../core.js'
+
 const typeName = "Any";
 
 var argError = null;
@@ -44,6 +46,7 @@ function ConstructorType(types){
 	var type = {
 		rand: rand,
 		test: test,
+		constValue: constValue,
 		preJSON: preJSON
 	}
 
@@ -61,6 +64,20 @@ function ConstructorType(types){
 		var result = types.every(typeItem => typeItem.test(value));
 		if(result)
 			return { value: value, type: preJSON()};
+	}
+
+	function constValue() {
+		if (types.length !== 1)
+			throw new NonConstantTypeError("Any type must have exactly one subtype to be constant", this);
+
+		try {
+			return types[0].constValue();
+		} catch (e) {
+			if (e instanceof NonConstantTypeError)
+				e.pushType(typeName)
+
+			throw e;
+		}
 	}
 
 	function preJSON(){
