@@ -2,6 +2,9 @@
 
 const typeName = "String";
 
+const defaultSymbolClass = "\\x20-\\x7E\\x10-\\xFFFF"
+const defaultRangeClass = "0x20–0x7E"
+
 let argError = null;
 
 let Types = null;
@@ -17,17 +20,17 @@ function ExtendTypes(Core){
 
 ExtendTypes.typeName = typeName;
 
-function ConstructorType(symbolClass, maxLength){
+function ConstructorType(symbolClass = "\\x1F-\\x7F\\x9F-\\xFFFF", maxLength = 16384){
 
 	let maxLengthType = Types.Index.Def(1024 * 1024);
 
 	if(typeof symbolClass !== "string" || maxLengthType.test(maxLength - 1))
 		throw argError(arguments, 'Wait args ( SymbolClass(String), maxLength(1024*1024>=Index>0) )');
-	
+
 	if(symbolClass[0] == "^")
 		symbolClass = "\\" + symbolClass;
 
-	let rangeSimbol = parseRange(symbolClass);
+	let rangeSimbol = parseRange(symbolClass == defaultSymbolClass ? defaultRangeClass : symbolClass);
 	let indexRangeType = Types.Index.Def(rangeSimbol.length);
 
 	let checkedRegExp = new RegExp('^[' + symbolClass + ']+$');

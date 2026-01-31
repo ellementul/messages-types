@@ -15,7 +15,6 @@ export default (function Test(Types){
 				[null],
 				[false],
 				[true],
-				["Hello world!"],
 				[5, "Hello world!"],
 				["a-za-D", 15],
 				["Hello world!", 0],
