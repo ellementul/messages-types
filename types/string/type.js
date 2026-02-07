@@ -20,7 +20,7 @@ function ExtendTypes(Core){
 
 ExtendTypes.typeName = typeName;
 
-function ConstructorType(symbolClass = "\\x1F-\\x7F\\x9F-\\xFFFF", maxLength = 16384){
+function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength = 16384){
 
 	let maxLengthType = Types.Index.Def(1024 * 1024);
 

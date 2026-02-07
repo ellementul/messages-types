@@ -20,6 +20,7 @@ export default (function Test(Types){
 				["Hello world!", 0],
 			],
 			validArgsForConstr: [
+				[],
 				["a-z", 15],
 				["^Hello world!", 5],
 				["\\w", 12],
@@ -32,12 +33,13 @@ export default (function Test(Types){
 				undefined,
 				null,
 				false,
-				true,
-				"Hello", //Upper case is wrong!
+				true
 			],
 			validValuesOfType: [
 				"hell",
 				"helloworld",
+				"Hello!",
+				"Hello \n\r\t type!"
 			],
 			repeatSelfTest: 1024,
 		},
