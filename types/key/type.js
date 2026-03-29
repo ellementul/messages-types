@@ -4,25 +4,30 @@ const typeName = "Key";
 
 var argError = null;
 
-import CrIndexType from '../index/type.js'
+import CrNumberType from '../number/type.js'
 
 var Types = null;
 
 function ExtendTypes(Core){
 	Types = Core;
 	argError = Core.argError;
-	if(!Core.Index)
-		CrIndexType(Core);
+	if(!Core.Number)
+		CrNumberType(Core);
 
 	Core.newType(typeName, ConstructorType, outJSON);
 }
 
 ExtendTypes.typeName = typeName;
 
-function ConstructorType(){
+function ConstructorType(min = 0){
+
+	if(typeof min !== 'number' || !isFinite(min)
+		||(min < 0)
+		||(min % 1 !== 0))
+		throw argError(arguments, 'Wait arguments: min(int>=0)');
 
 	var chars = crChars();
-	var sizeType = Types.Index.Def(256);
+	var sizeType = Types.Number.Def(256, min, 0);
 	var indexType = Types.Index.Def(chars.length);
 	var regEx =  /^[a-zA-Z0-9_]*$/;
 
