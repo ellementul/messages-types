@@ -11,20 +11,20 @@ export default (function Test(Types){
 			wrongConstrArgsArray: [
 				[{}],
 				[[]],
-				[5],
 				[null],
 				[false],
 				[true],
-				[5, "Hello world!"],
-				["a-za-D", 15],
-				["Hello world!", 0],
+				["Hello world!"],
+				[-1],
+				[0],
 			],
 			validArgsForConstr: [
 				[],
-				["a-z", 15],
-				["^Hello world!", 5],
-				["\\w", 12],
-				["1", 1]
+				[15],
+				[5],
+				[12],
+				[1],
+				[1024]
 			],
 			wrongValuesOfType: [
 				{},

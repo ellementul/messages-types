@@ -2,9 +2,6 @@
 
 const typeName = "String";
 
-const defaultSymbolClass = "\\x20-\\x7E\\x10-\\xFFFF"
-const defaultRangeClass = "0x20–0x7E"
-
 let argError = null;
 
 let Types = null;
@@ -20,22 +17,14 @@ function ExtendTypes(Core){
 
 ExtendTypes.typeName = typeName;
 
-function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength = 16384){
+function ConstructorType(maxLength = 16384){
 
 	let maxLengthType = Types.Index.Def(1024 * 1024);
 
-	if(typeof symbolClass !== "string" || maxLengthType.test(maxLength - 1))
-		throw argError(arguments, 'Wait args ( SymbolClass(String), maxLength(1024*1024>=Index>0) )');
+	if(maxLengthType.test(maxLength - 1))
+		throw argError(arguments, 'Wait args ( maxLength(1024*1024>=Index>0) )');
 
-	if(symbolClass[0] == "^")
-		symbolClass = "\\" + symbolClass;
-
-	let rangeSimbol = parseRange(symbolClass == defaultSymbolClass ? defaultRangeClass : symbolClass);
-	let indexRangeType = Types.Index.Def(rangeSimbol.length);
-
-	let checkedRegExp = new RegExp('^[' + symbolClass + ']+$');
 	let lengthType = Types.Index.Def(maxLength);
-
 
 	let type = {
 		rand: rand,
@@ -50,10 +39,10 @@ function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength 
 			length++;
 
 		var str = '';
+		const hexChars = '0123456789abcdef';
 
 		while(length--){
-			var der = rangeSimbol[indexRangeType.rand()];
-			str +=String.fromCharCode(der);
+			str += hexChars[Math.floor(Math.random() * 16)];
 		}
 
 		return str;
@@ -62,7 +51,6 @@ function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength 
 	function test(str){
 		if((typeof(str) !== 'string')
 			|| lengthType.test(str.length - 1)
-			|| !checkedRegExp.test(str)
 		)
 			return { value: str, type: preJSON()};
 		
@@ -74,7 +62,6 @@ function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength 
 		var type = {};
 		type.name = typeName;
 		type.struct = {
-			symbolClass, 
 			maxLength,
 		};
 		return type;
@@ -86,63 +73,9 @@ function ConstructorType(symbolClass = "\\s\\x1F-\\x7F\\x9F-\\xFFFF", maxLength 
 
 function outJSON(preType){
 	if(typeof preType == "object" && preType.name == typeName)
-		return ConstructorType(preType.struct.symbolClass, preType.struct.maxLength);
+		return ConstructorType(preType.struct.maxLength);
 	else
 		throw new Error("This isn't type " + typeName + "!");
-}
-
-function replaceSpecChar(c){
-	switch(c){
-		case 'w': return 'a-zA-Z0-9_';
-		case 'd': return '0-9';
-		case 's': return '\\t\\n\\v\\f\\r ';
-
-		default: return c;
-	}
-}
-
-function rangeInArr(beg, end){
-	if(beg > end){
-		var tmp = beg;
-		beg = end;
-		end = tmp;
-	}
-
-	var arr = [];
-	for(var i = beg; i <= end; i++){
-		arr.push(i);
-	}
-
-	return arr;
-}
-
-function parseRange(parse_str){
-	if(/\\./.test(parse_str)){
-			parse_str = parse_str.replace(/\\(.)/g, function(str, char){ return replaceSpecChar(char);});
-	}
-
-	let result = [];
-
-	let beg_char = parse_str[0];
-	for(let i = 1; i <= parse_str.length; i++){
-
-		if(parse_str[i-1] !== '\\'
-			&&parse_str[i] === '-'
-			&&parse_str[i+1]){
-			i++;
-			let end_char = parse_str[i];
-
-			let arr_chars = rangeInArr(beg_char.charCodeAt(0), end_char.charCodeAt(0));
-			result = result.concat(arr_chars);
-
-			i++;
-		}else{
-			result.push(beg_char.charCodeAt(0));
-		}
-
-		beg_char = parse_str[i];
-	}
-	return result;
 }
 
 export default ExtendTypes

@@ -95,7 +95,7 @@ const MessageType = Types.Object.Def({
   id: Types.Key.Def(),
   timestamp: Types.Number.Def(1700000000, 1600000000, 0),
   payload: Types.Any.Def([
-    Types.String.Def("\\w", 256),
+    Types.String.Def(256),
     Types.Buffer.Def(2048, true) // non-empty binary data
   ])
 });
