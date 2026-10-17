@@ -1,6 +1,7 @@
 'use strict';
 
 const typeName = "Number";
+import Types from "../../core.js"
 var argError
 
 function ExtendTypes(Core){
@@ -23,9 +24,34 @@ function ConstructorType(max, min, precis){
 	
 
 	var type = {
-		rand: rand,
-		test: test,
-		preJSON: preJSON
+		rand,
+		test,
+		preJSON,
+		isSubtype
+	}
+
+	function isSubtype(otherType) {
+		if (!Types.isType(otherType)) return false;
+		const otherJson = otherType.preJSON();
+
+		if (otherJson.name === "Number") {
+			return (
+				otherJson.struct.min >= min &&
+				otherJson.struct.max <= max &&
+				otherJson.struct.precis <= precis
+			);
+		}
+
+		if (otherJson.name === "Index") {
+			// Диапазон Index: [0, max). Должен помещаться в [min, max] супертипа.
+			return 0 >= min && otherJson.struct.max - 1 <= max;
+		}
+
+		if (otherJson.name === "Const") {
+			return !test(otherJson.struct);
+		}
+
+		return false;
 	}
 
 	function rand(){

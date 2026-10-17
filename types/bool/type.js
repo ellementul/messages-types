@@ -1,9 +1,10 @@
 'use strict';
 
-const typeName = "Bool";
+import Types from "../../core.js"
+const typeName = "Bool"
 
 function ExtendTypes(Core){
-	Core.newType(typeName, ConstructorType, outJSON);
+	Core.newType(typeName, ConstructorType, outJSON)
 }
 
 ExtendTypes.typeName = typeName;
@@ -11,9 +12,23 @@ ExtendTypes.typeName = typeName;
 function ConstructorType(){
 
 	var type = {
-		rand: rand,
-		test: test,
-		preJSON: preJSON
+		rand,
+		test,
+		preJSON,
+		isSubtype
+	}
+
+	function isSubtype(otherType) {
+		if (!Types.isType(otherType)) return false
+		const otherJson = otherType.preJSON()
+
+		if (otherJson.name === "Bool")
+			return true
+
+		if (otherJson.name === "Const")
+			return typeof otherJson.struct === "boolean"
+
+		return false
 	}
 
 	function rand(){

@@ -34,6 +34,25 @@ function Test(Types){
 	while(repeat--) if(type.test(outJType.rand()))
 		throw new Error();
 
+	console.log("	Check subType ...");
+	//====================================
+	const constTrue = Types.Const.Def(true);
+	const constFalse = Types.Const.Def(false);
+	const constString = Types.Const.Def("hello");
+
+	// Bool является подтипом самого себя
+	if (!type.isSubtype(type)) 
+		throw new Error("Bool should be subtype of Bool");
+
+	// Const(true) и Const(false) являются подтипами Bool
+	if (!type.isSubtype(constTrue)) 
+		throw new Error("Const(true) should be subtype of Bool");
+	if (!type.isSubtype(constFalse)) 
+		throw new Error("Const(false) should be subtype of Bool");
+
+	// Const со строкой НЕ является подтипом Bool
+	if (type.isSubtype(constString)) 
+		throw new Error("Const(string) should NOT be subtype of Bool");
 }
 
 

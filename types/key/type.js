@@ -31,9 +31,24 @@ function ConstructorType(min = 0){
 	var regEx =  /^[a-zA-Z0-9_]*$/
 
 	var type = {
-		rand: rand,
-		test: test,
-		preJSON: preJSON
+		rand,
+		test,
+		preJSON,
+		isSubtype
+	}
+
+	function isSubtype(otherType) {
+		if (!Types.isType(otherType)) return false;
+		const otherJson = otherType.preJSON();
+
+		if (otherJson.name === "Key")
+			return otherJson.struct.min >= min;
+		
+
+		if (otherJson.name === "Const")
+			return !test(otherJson.struct)
+
+		return false
 	}
 
 	function rand(){
@@ -53,15 +68,17 @@ function ConstructorType(min = 0){
 	function test(str){
 		if(typeof(str) !== 'string'
 		||str.length > 256
+		||str.length < min
 		||!regEx.test(str)){
-			return { value: str, type: preJSON()};
+			return { value: str, type: preJSON()}
 		}
 	}
 
 	function preJSON(){
-		var type = {};
-		type.name = typeName;
-		return type;
+		var type = {}
+		type.name = typeName
+		type.struct = { min }
+		return type
 	}
 
 	return type;
@@ -70,7 +87,7 @@ function ConstructorType(min = 0){
 
 function outJSON(preType){
 	if(typeof preType == "object" && preType.name == typeName)
-		return ConstructorType(preType.struct)
+		return ConstructorType(preType.struct.min)
 	else
 		throw new Error("This isn't type " + typeName + "!");
 }

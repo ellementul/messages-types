@@ -26,6 +26,13 @@ function Test(Types){
 	if(!Types.isType(type) || !Types.isType(Types.Const.Def()))
 		throw new Error();
 
+	console.log("	Check subType ...")
+	//====================================
+	if(!type.isSubtype(Types[ExtendTypes.typeName].Def(value)))
+		throw new Error()
+
+	if(type.isSubtype(Types[ExtendTypes.typeName].Def("Bye!")))
+		throw new Error()
 
 	console.log("	Check slef-test ...");
 	//====================================

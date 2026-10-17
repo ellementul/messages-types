@@ -1,6 +1,6 @@
 'use strict';
 
-import Types from "../../core.js";
+import Types from "../../core.js"
 
 const typeName = "Const";
 
@@ -19,10 +19,18 @@ function ConstructorType(constVal){
 		throw argError(arguments, 'Const value cannot be Type or Function!');
 
 	var type = {
-		rand: rand,
-		test: test,
-		constValue: constValue,
-		preJSON: preJSON
+		rand,
+		test,
+		constValue,
+		preJSON,
+		isSubtype
+	}
+
+	function isSubtype(otherType) {
+		if (!Types.isType(otherType)) return false;
+		const otherJson = otherType.preJSON();
+		
+		return otherJson.name === "Const" && otherJson.struct === constVal
 	}
 
 	function rand(){
