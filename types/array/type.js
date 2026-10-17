@@ -48,17 +48,25 @@ function ConstructorType(itemType, maxLength, is_empty){
 		return arr;
 	}
 
-	function test(arr){
+	function test(arr, path = '$'){
 		if(!Array.isArray(arr))
-			return { value: arr, type: preJSON()};
+			return { value: arr, type: preJSON(), path}
 
 		if((arr.length > maxLength) || (!is_empty && arr.length == 0))
-			return { length: arr.length, type: preJSON()};
+			return { length: arr.length, type: preJSON(), path}
 
-		var err_arr = arr.map(itemType.test).filter(item => item);
+		let err_arr = null
+		for (let i = 0; i < arr.length; i++) {
+			const childPath = path + '[' + i + ']'
+			err_arr = itemType.test(arr[i], childPath);
+			if(err_arr){
+				err_arr.path = err_arr.path || childPath
+				break
+			}
+		}
 
-		if(err_arr.length)
-			return { wrong_values: err_arr, type: preJSON()};
+		if(err_arr)
+			return err_arr
 	}
 
 	function constValue() {

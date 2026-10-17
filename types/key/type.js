@@ -26,10 +26,9 @@ function ConstructorType(min = 0){
 		||(min % 1 !== 0))
 		throw argError(arguments, 'Wait arguments: min(int>=0)');
 
-	var chars = crChars();
-	var sizeType = Types.Number.Def(256, min, 0);
-	var indexType = Types.Index.Def(chars.length);
-	var regEx =  /^[a-zA-Z0-9_]*$/;
+	var chars = crChars()
+	var indexType = Types.Index.Def(chars.length)
+	var regEx =  /^[a-zA-Z0-9_]*$/
 
 	var type = {
 		rand: rand,
@@ -38,7 +37,7 @@ function ConstructorType(min = 0){
 	}
 
 	function rand(){
-		var size = sizeType.rand();
+		var size = min + indexType.rand();
 
 		var str = '';
 		while(size){

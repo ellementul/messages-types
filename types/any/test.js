@@ -45,9 +45,6 @@ function Test(Types){
 
 	if(type.test(5))
 		throw new Error()
-
-	if(Types[ExtendTypes.typeName].Def().test())
-		throw new Error()
 	
 
 	console.log("	Check slef-test ...");

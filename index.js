@@ -11,7 +11,6 @@ import Object from './types/object/type.js'
 import Array from './types/array/type.js'
 import Any from './types/any/type.js'
 import String from './types/string/type.js'
-import Switch from './types/switch/type.js'
 import Uuid from './types/uuid/type.js'
 
 Template(Types)
@@ -24,7 +23,6 @@ Object(Types)
 Array(Types)
 Any(Types)
 String(Types)
-Switch(Types)
 Uuid(Types)
 
 export default Types

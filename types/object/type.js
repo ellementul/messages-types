@@ -44,8 +44,8 @@ function ConstructorType(sourceObj, non_strict_key){
 		return genObj(typeObj);
 	}
 
-	function test(testingObj, objsStack){
-		return testObj(typeObj, testingObj, objsStack, non_strict_keys);
+	function test(testingObj, path = '$'){
+		return testObj(typeObj, testingObj, null, non_strict_keys, path);
 	}
 	
 	function constValue(){
@@ -107,11 +107,12 @@ function reCostructObj(sourceObj, objsStack){
 	return funcObj;
 }
 
-function testObj(typeObj, testingObj, objsStack, non_strict_keys){
+function testObj(typeObj, testingObj, objsStack, non_strict_keys, path){
 
 	if(!testingObj || (typeof testingObj !== "object" && !Array.isArray(testingObj)))
 		return { 
 			messege: "This has to be object!",
+			path: path,
 			value: testingObj, 
 			type: { 
 				name: typeName, 
@@ -120,22 +121,24 @@ function testObj(typeObj, testingObj, objsStack, non_strict_keys){
 		}
 
 	if(!objsStack)
-		objsStack = [];
+		objsStack = []
 
-	objsStack.push(testingObj);
+	objsStack.push(testingObj)
 
 	var result = false;
 
 	for(let key in typeObj){
+		let childPath = path + '.' + key
 
 		if(Types.isType(typeObj[key]))
-			result = typeObj[key].test(testingObj[key])
+			result = typeObj[key].test(testingObj[key], childPath)
 		else
-			result = testObj(typeObj[key], testingObj[key], objsStack, non_strict_keys)
+			result = testObj(typeObj[key], testingObj[key], objsStack, non_strict_keys, childPath)
 
-		if(result)
+		if(result) {
+			result.path = result.path || childPath
 			return result
-		
+		}		
 	}
 
 	for(let key in testingObj){
@@ -145,11 +148,12 @@ function testObj(typeObj, testingObj, objsStack, non_strict_keys){
 		if(!Types.isType(typeObj[key]) && !non_strict_keys)
 			return { 
 				messege: "Here cannot value!", 
-				key: key, 
+				key: key,
+				path: path + '.' + key, 
 				value: testingObj[key], 
 				type: {
 					name: typeName, 
-					struct: objPreJson(typeObj[key])
+					struct: typeObj[key] ? objPreJson(typeObj[key]) : "Not type for this key!"
 				}
 			}
 	}

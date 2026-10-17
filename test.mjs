@@ -11,7 +11,6 @@ import Object from './types/object/test.js'
 import Array from './types/array/test.js'
 import Any from './types/any/test.js'
 import String from './types/string/test.js'
-import Switch from './types/switch/test.js'
 import Uuid from './types/uuid/test.js'
 import TestCore from './core.test.js'
 
@@ -25,7 +24,6 @@ Object(Types)
 Array(Types)
 Any(Types)
 String(Types)
-Switch(Types)
 Uuid(Types)
 TestCore(Types)
 

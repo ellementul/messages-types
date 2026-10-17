@@ -29,7 +29,7 @@ ExtendTypes.typeName = typeName;
 function ConstructorType(types){
 
 	if(!Array.isArray(types))
-		types = Array.from(arguments);
+		types = Array.from(arguments)
 
 	types = types.map( type => {
 		if(Types.isType(type))
@@ -41,7 +41,10 @@ function ConstructorType(types){
 		return Types.Const.Def(type)
 	})
 
-	const typeIndex = types.length && Types.Index.Def(types.length)
+	if(types.length < 1)
+		throw argError(arguments, 'Wait Type or Types!')
+
+	const typeIndex = Types.Index.Def(types.length)
 
 	var type = {
 		rand: rand,
@@ -51,19 +54,34 @@ function ConstructorType(types){
 	}
 
 	function rand(){
-		if(!types.length)
-			return null
-
 		return types[typeIndex.rand()].rand();
 	}
 
-	function test(value){
-		if(!types.length)
-			return false
+	function test(value, path = '$'){
+		let isValid = false
+		const errors = {}
+		const childPath = path + '.[any]'
+		for (let i = 0; i < types.length; i++) {
+			const itemType = types[i]
+			
+			const err = itemType.test(value, childPath)
+			if(err) {
+				const { type } = err
+				errors[type.name] = err
+			}
+			else {
+				isValid = true
+				break
+			}
+		}
 
-		var result = types.every(typeItem => typeItem.test(value));
-		if(result)
-			return { value: value, type: preJSON()};
+		if(!isValid)
+			return {
+				value,
+				path: childPath,
+				type: preJSON(),
+				errors
+			}
 	}
 
 	function constValue() {
