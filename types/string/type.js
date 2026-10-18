@@ -37,7 +37,7 @@ function ConstructorType(maxLength = 16384){
 		if (!Types.isType(otherType)) return false
 		const otherJson = otherType.preJSON()
 
-		if (otherJson.name === "String") {
+		if (otherJson.name === typeName) {
 			return otherJson.struct.maxLength <= maxLength
 		}
 

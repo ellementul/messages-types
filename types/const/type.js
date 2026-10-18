@@ -30,7 +30,7 @@ function ConstructorType(constVal){
 		if (!Types.isType(otherType)) return false;
 		const otherJson = otherType.preJSON();
 		
-		return otherJson.name === "Const" && otherJson.struct === constVal
+		return otherJson.name === typeName && otherJson.struct === constVal
 	}
 
 	function rand(){

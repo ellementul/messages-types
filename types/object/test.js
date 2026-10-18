@@ -225,6 +225,40 @@ function Test(Types){
 	if (!Types.isType(restoredType)) throw new Error("Restored type is not valid");
 	const restoredVal = restoredType.rand();
 	if (restoredType.test(restoredVal)) throw new Error("Restored type validation failed");
+
+
+	console.log("	Check subType ...");
+	//====================================
+	const superObj = Types.Object.Def({
+		name: Types.String.Def(100),
+		age: Types.Number.Def(150, 0, 0)
+	});
+
+	// 1. Object с такими же ключами и типами — подтип (эквивалентен)
+	const sameObj = Types.Object.Def({
+		name: Types.String.Def(100),
+		age: Types.Number.Def(150, 0, 0)
+	});
+	if (!superObj.isSubtype(sameObj)) 
+		throw new Error("Object with same structure should be subtype");
+
+	// 2. Object с более узкими типами зн…, 3]);
+	if (superObj.isSubtype([1, 2, 3])) 
+		throw new Error("Const array should NOT be subtype of Object");
+
+	// 10. Вложенные объекты — рекурсивная проверка
+	const nestedSuperObj = Types.Object.Def({
+		user: Types.Object.Def({
+			name: Types.String.Def(100)
+		})
+	});
+	const nestedSubObj = Types.Object.Def({
+		user: Types.Object.Def({
+			name: Types.String.Def(50)
+		})
+	});
+	if (!nestedSuperObj.isSubtype(nestedSubObj)) 
+		throw new Error("Nested object with narrower types should be subtype");
 }
 
 function testArg(Type, arg){
