@@ -124,13 +124,23 @@ function mixType(type){
             return Types.Const.Def(value)
         }
     }
+
+	// Обертка для делегирования проверки Union-у
+    const originalIsSubtype = type.isSubtype || function() { return false }
+    type.isSubtype = function(otherType) {
+        if (!Types.isType(otherType)) return false
+        if (otherType.preJSON().name === "Union") {
+            return otherType.isSupertype(this)
+        }
+        return originalIsSubtype.call(this, otherType)
+    };
 }
 
 function crToJSON(preJSON){
 	return function(tabs){
-		var preJson = Object.assign({}, preJSON());
-		delete preJson.toJSON;
-		return JSON.stringify(preJson, "", tabs);
+		var preJson = Object.assign({}, preJSON())
+		delete preJson.toJSON
+		return JSON.stringify(preJson, "", tabs)
 	}
 }
 
@@ -139,13 +149,13 @@ function isType(type) {
 			&& typeof type.rand == "function" 
 			&& typeof type.test == "function"
 			&& typeof type.preJSON == "function"
-			&& typeof type.toJSON == "function";
+			&& typeof type.toJSON == "function"
 }
 
 function isCrType(crType){
 	return typeof crType == "object" && crType[crTypeID] == crTypeID
 			&& typeof crType.Def == "function" 
-			&& typeof crType.outJSON == "function";
+			&& typeof crType.outJSON == "function"
 }
 
 export default Types

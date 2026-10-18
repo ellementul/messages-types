@@ -50,7 +50,52 @@ function ConstructorType(types){
 		rand: rand,
 		test: test,
 		constValue: constValue,
-		preJSON: preJSON
+		preJSON: preJSON,
+		isSubtype: isSubtype,
+		isSupertype: isSupertype
+	}
+
+	function isSubtype(otherType) {
+		if (!Types.isType(otherType)) return false;
+
+		const otherJson = otherType.preJSON();
+
+		// Если другой тип тоже Union: каждый его вариант должен подходить под хоть один наш вариант
+		if (otherJson.name === typeName) {
+			const otherVariants = otherJson.struct.map(v => Types.outJSON(v));
+			
+			for (let i = 0; i < otherVariants.length; i++) {
+				let isSub = false;
+				for (let j = 0; j < types.length; j++) {
+					if (types[j].isSubtype(otherVariants[i])) {
+						isSub = true;
+						break;
+					}
+				}
+				if (!isSub) return false;
+			}
+			return true;
+		}
+
+		// Обычный тип является подтипом Union, если он подходит хотя бы под один наш вариант
+		for (let i = 0; i < types.length; i++) {
+			if (types[i].isSubtype(otherType)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	function isSupertype(superType) {
+		if (!Types.isType(superType)) return false;
+
+		// Union является подтипом superType, если КАЖДЫЙ его вариант является подтипом superType
+		for (let i = 0; i < types.length; i++) {
+			if (!superType.isSubtype(types[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function rand(){
