@@ -7,6 +7,7 @@ function Test(Types){
 	console.log("Type "+ ExtendTypes.typeName +" testing ...");
 
 	ExtendTypes(Types);
+	Types.Any = Types.Union
 
 	if(!Types.Key)
 		KeyTypes(Types);
@@ -95,7 +96,7 @@ function Test(Types){
 			throw new Error("Expected NonConstantTypeError, got different error: " + e.message);
 		}
 		// Проверяем, что в стеке типов есть информация о текущем типе
-		if (!e.typeStack || !e.typeStack.includes("Any") || !e.typeStack.includes("Number")) {
+		if (!e.typeStack || !e.typeStack.includes("Union") || !e.typeStack.includes("Number")) {
 			throw new Error("Error should contain type stack with 'Any' type");
 		}
 	}

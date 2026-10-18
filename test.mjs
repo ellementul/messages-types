@@ -9,7 +9,7 @@ import Index from './types/index/test.js'
 import Key from './types/key/test.js'
 import Object from './types/object/test.js'
 import Array from './types/array/test.js'
-import Any from './types/any/test.js'
+import Union from './types/union/test.js'
 import String from './types/string/test.js'
 import Uuid from './types/uuid/test.js'
 import TestCore from './core.test.js'
@@ -22,7 +22,7 @@ Index(Types)
 Key(Types)
 Object(Types)
 Array(Types)
-Any(Types)
+Union(Types)
 String(Types)
 Uuid(Types)
 TestCore(Types)

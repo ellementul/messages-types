@@ -9,7 +9,7 @@ import Index from './types/index/type.js'
 import Key from './types/key/type.js'
 import Object from './types/object/type.js'
 import Array from './types/array/type.js'
-import Any from './types/any/type.js'
+import Union from './types/union/type.js'
 import String from './types/string/type.js'
 import Uuid from './types/uuid/type.js'
 
@@ -21,7 +21,9 @@ Index(Types)
 Key(Types)
 Object(Types)
 Array(Types)
-Any(Types)
+// Псевдоним для обратной совместимости
+Types.Any = Types.Union
+Union(Types)
 String(Types)
 Uuid(Types)
 

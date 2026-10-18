@@ -5,7 +5,7 @@ import CrConstType from '../index/type.js'
 
 import { NonConstantTypeError } from '../../core.js'
 
-const typeName = "Any";
+const typeName = "Union";
 
 var argError = null;
 
